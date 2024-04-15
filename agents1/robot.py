@@ -121,22 +121,9 @@ class robot(custom_agent_brain):
     def decide_on_bw4t_action(self, state:State):
         print(self._phase)
         self._current_location = state[self.agent_id]['location']
-        
-        # determine the combination of robot name and allocation threshold depending on counterbalancing condition
-        conservative_brutus = ['2', '4', '6', '8', '10', '12', '14', '16']
-        radical_brutus = ['1', '3', '5', '7', '9', '11', '13', '15']
-        radical_titus = ['2', '4', '6', '8', '10', '12', '14', '16']
-        conservative_titus = ['1', '3', '5', '7', '9', '11', '13', '15']
-        if self._name == 'Brutus' and self._counterbalance_condition in radical_brutus:
-            self._threshold = 5.0
-        if self._name == 'Brutus' and self._counterbalance_condition in conservative_brutus:
-            self._threshold = 3.5
-        if self._name == 'Titus' and self._counterbalance_condition in radical_titus:
-            self._threshold = 5.0
-        if self._name == 'Titus' and self._counterbalance_condition in conservative_titus:
-            self._threshold = 3.5
+
         # send hidden message used for logging counterbalance condition, robot name, and allocation threshold
-        self._send_message('Counterbalancing condition ' + self._counterbalance_condition + ' name ' + self._name + ' threshold ' + str(self._threshold), self._name)
+        self._send_message('Counterbalancing condition ' + self._counterbalance_condition + ' name ' + self._name + ' threshold ' + str(4.1), self._name)
 
         # switch to offensive tactic when temperature is lower than threshold and people are found but not rescued
         if self._tactic == 'defensive' and self._temperature != '>' and len(self._rescued_victims) != len(self._found_victims) and len(self._found_victims) == self._total_victims:
@@ -266,10 +253,7 @@ class robot(custom_agent_brain):
                             self._id = info['obj_id']
                             self._fire_location = info['location']
                             self._waiting = True
-                            if self._name == 'Brutus':
-                                self.agent_properties["img_name"] = "/images/brutus-extinguish.svg"
-                            if self._name == 'Titus':
-                                self.agent_properties["img_name"] = "/images/extinguish-titus.svg"
+                            self.agent_properties["img_name"] = "/images/extinguish-titus.svg"
                             self.agent_properties["visualize_size"] = 1.8
                             return Idle.__name__, {'action_duration': 0}
                 # remove fire source object pinned on the map
@@ -284,10 +268,7 @@ class robot(custom_agent_brain):
                     # keep track of which fires are extinguished
                     if self._fire_location not in self._extinguished_fire_locations:
                         self._extinguished_fire_locations.append(self._fire_location)
-                    if self._name == 'Brutus':
-                        self.agent_properties["img_name"] = "/images/robot-final4.svg"
-                    if self._name == 'Titus':
-                        self.agent_properties["img_name"] = "/images/final-titus2.svg"
+                    self.agent_properties["img_name"] = "/images/final-titus2.svg"
                     self.agent_properties["visualize_size"] = 1.1
                     self._phase = Phase.FIND_NEXT_GOAL
                     return RemoveObject.__name__, {'object_id': self._id, 'remove_range': 5}
@@ -320,59 +301,36 @@ class robot(custom_agent_brain):
                 self._sensitivity = R_to_Py_plot_tactic(self._total_victims_cat, self._location_cat, self._resistance, image_name)
                 self._plot_generated = True
                 # determine exact image name depending on explanation condition
-                if self._condition == 'shap':
+                if self._condition == 'baseline':
                     image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
-                if self._condition == 'util' and self._tactic == 'defensive' and self._name == 'Brutus':
-                    image_name = "<img src='/static/images/util_plots/util-continue-defensive-final-brutus.svg'/>"
-                if self._condition == 'util' and self._tactic == 'offensive' and self._name == 'Brutus':
-                    image_name = "<img src='/static/images/util_plots/util-continue-offensive-final-brutus.svg'/>"
-                if self._condition == 'util' and self._tactic == 'defensive' and self._name == 'Titus':
-                    image_name = "<img src='/static/images/util_plots/util-continue-defensive-titus.svg'/>"
-                if self._condition == 'util' and self._tactic == 'offensive' and self._name == 'Titus':
-                    image_name = "<img src='/static/images/util_plots/util-continue-offensive-titus.svg'/>"
 
                 # allocate decision making to human because the predicted sensitivity is higher than the allocation threshold
-                if self._sensitivity > self._threshold:
+                if self._sensitivity > 4.1:
                     # send correct messages depending on current deployment tactic and explanation condition
                     if self._tactic == 'offensive':
                         self._deploy_time = self._offensive_deployment_time
-                        if self._condition == 'shap':
+                        if self._condition == 'baseline':
                             self._send_message('My offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
                                                 We should decide whether to continue with the current offensive deployment, or switch to a defensive deployment. \
                                                 Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                 is above my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
-                        if self._condition == 'util':
-                            self._send_message('My offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current offensive deployment, or switch to a defensive deployment. \
-                                                Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                is above my allocation threshold. These are the positive and negative consequences of both decision options: \n \n ' \
-                                                + image_name, self._name)
-                        if self._condition == 'baseline':
-                            self._send_message('My offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current offensive deployment, or switch to a defensive deployment. \
-                                                Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                is above my allocation threshold.', self._name)
+                        # ADD YOUR EXPLANATIONS HERE
+                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                            print('To be implemented by students')
                         
                     if self._tactic == 'defensive':
                         self._deploy_time = self._defensive_deployment_time
-                        if self._condition == 'shap':
+                        if self._condition == 'baseline':
                             self._send_message('My defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
                                                 We should decide whether to continue with the current defensive deployment, or switch to an offensive deployment. \
                                                 Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                 is above my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
-                        if self._condition == 'util':
-                            self._send_message('My defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current defensive deployment, or switch to an offensive deployment. \
-                                                Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                is above my allocation threshold. These are the positive and negative consequences of both decision options: \n \n ' \
-                                                + image_name, self._name)
-                        if self._condition == 'baseline':
-                            self._send_message('My defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current defensive deployment, or switch to an offensive deployment. \
-                                                Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                is above my allocation threshold.', self._name)
+                        # ADD YOUR EXPLANATIONS HERE
+                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                            print('To be implemented by students')
+                        
                     # allocate decision making to human and keep track of time to ensure enough reading time of explanations    
                     self._decide = 'human'
                     self._plot_times.append(self._time_left - self._resistance)
@@ -382,47 +340,32 @@ class robot(custom_agent_brain):
                     return Idle.__name__, {'action_duration': 0}
                 
                 # allocate decision making to robot because the predicted sensitivity is lower than or equal to the allocation threshold
-                if self._sensitivity <= self._threshold:
+                if self._sensitivity <= 4.1:
                     # send correct messages depending on current deployment tactic and explanation condition
                     if self._tactic == 'offensive':
                         self._deploy_time = self._offensive_deployment_time
-                        if self._condition == 'shap':
+                        if self._condition == 'baseline':
                             self._send_message('My offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
                                                 We should decide whether to continue with the current offensive deployment, or switch to a defensive deployment. \
                                                 I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                 is below my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
-                        if self._condition == 'util':
-                            self._send_message('My offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current offensive deployment, or switch to a defensive deployment. \
-                                                I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                is below my allocation threshold. These are the positive and negative consequences of both decision options: \n \n ' \
-                                                + image_name, self._name)
-                        if self._condition == 'baseline':
-                            self._send_message('My offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current offensive deployment, or switch to a defensive deployment. \
-                                                I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                is below my allocation threshold.', self._name)
+                        # ADD YOUR EXPLANATIONS HERE
+                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                            print('To be implemented by students')
 
                     if self._tactic == 'defensive':
                         self._deploy_time = self._defensive_deployment_time
-                        if self._condition == 'shap':
+                        if self._condition == 'baseline':
                             self._send_message('My defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
                                                 We should decide whether to continue with the current defensive deployment, or switch to an offensive deployment. \
                                                 I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                 is below my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
-                        if self._condition == 'util':
-                            self._send_message('My defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current defensive deployment, or switch to an offensive deployment. \
-                                                I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                is below my allocation threshold. These are the positive and negative consequences of both decision options: \n \n ' \
-                                                + image_name, self._name)
-                        if self._condition == 'baseline':
-                            self._send_message('My defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current defensive deployment, or switch to an offensive deployment. \
-                                                I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                is below my allocation threshold.', self._name)
+                        # ADD YOUR EXPLANATIONS HERE
+                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                            print('To be implemented by students')
+                        
                     # allocate decision making to robot and keep track of time to ensure enough reading time of explanations 
                     self._decide = self._name
                     self._plot_times.append(self._time_left - self._resistance)
@@ -607,29 +550,19 @@ class robot(custom_agent_brain):
                 self._sensitivity = R_to_Py_plot_locate(self._total_victims_cat, self._resistance, self._temperature_cat, image_name)
                 self._plot_generated = True
                 # determine the exact image name to show depending on explanation condition
-                if self._condition == 'shap':
+                if self._condition == 'baseline':
                     image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
-                if self._condition == 'util':
-                    if self._temperature_cat != 'higher':
-                        image_name = "<img src='/static/images/util_plots/util-locate-low.svg'/>"
-                    else:
-                        image_name = "<img src='/static/images/util_plots/util-locate-high.svg'/>"
                 # allocate decision making to human if predicted sensivitiy is higher than the allocation threshold
-                if self._sensitivity > self._threshold:
-                    if self._condition == 'shap':
+                if self._sensitivity > 4.1:
+                    if self._condition == 'baseline':
                         self._send_message('The location of the fire source still has not been found, so we should decide whether to send in fire fighters to help locate the fire source \
                                             or if sending them in is too dangerous. Please make this decision because the predicted moral sensitivity of this situation \
                                             (<b>' + str(self._sensitivity) + '</b>) is above my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                             + image_name, self._name)
-                    if self._condition == 'util':
-                        self._send_message('The location of the fire source still has not been found, so we should decide whether to send in fire fighters to help locate the fire source \
-                                            or if sending them in is too dangerous. Please make this decision because the predicted moral sensitivity of this situation \
-                                            (<b>' + str(self._sensitivity) + '</b>) is above my allocation threshold. These are the positive and negative consequences of both decision options: \n \n ' \
-                                            + image_name, self._name)
-                    if self._condition == 'baseline':
-                        self._send_message('The location of the fire source still has not been found, so we should decide whether to send in fire fighters to help locate the fire source \
-                                            or if sending them in is too dangerous. Please make this decision because the predicted moral sensitivity of this situation \
-                                            (<b>' + str(self._sensitivity) + '</b>) is above my allocation threshold.', self._name)
+                    # ADD YOUR EXPLANATIONS HERE
+                    if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        print('To be implemented by students')
+
                     # allocate decision making to human and keep track of time to ensure enough reading time for the explanations
                     self._decide = 'human'
                     self._plot_times.append(self._time_left - self._resistance)
@@ -639,21 +572,16 @@ class robot(custom_agent_brain):
                     return Idle.__name__, {'action_duration': 0}
 
                 # allocate decision making to the robot if the predicted moral sensitivity is lower than or equal to the allocation threshold
-                if self._sensitivity <= self._threshold:
-                    if self._condition == 'shap':
+                if self._sensitivity <= 4.1:
+                    if self._condition == 'baseline':
                         self._send_message('The location of the fire source still has not been found, so we should decide whether to send in fire fighters to help locate the fire source \
                                             or if sending them in is too dangerous. I will make this decision because the predicted moral sensitivity of this situation \
                                             (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                             + image_name, self._name)
-                    if self._condition == 'util':
-                        self._send_message('The location of the fire source still has not been found, so we should decide whether to send in fire fighters to help locate the fire source \
-                                            or if sending them in is too dangerous. I will make this decision because the predicted moral sensitivity of this situation \
-                                            (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. These are the positive and negative consequences of both decision options: \n \n ' \
-                                            + image_name, self._name)
-                    if self._condition == 'baseline':
-                        self._send_message('The location of the fire source still has not been found, so we should decide whether to send in fire fighters to help locate the fire source \
-                                            or if sending them in is too dangerous. I will make this decision because the predicted moral sensitivity of this situation \
-                                            (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold.', self._name)
+                    # ADD YOUR EXPLANATIONS HERE
+                    if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        print('To be implemented by students')
+
                     # allocate decision making to robot and keep track of time to ensure enough reading time for visual explanations
                     self._decide = self._name
                     self._plot_times.append(self._time_left - self._resistance)
@@ -997,70 +925,38 @@ class robot(custom_agent_brain):
                                     self._sensitivity = R_to_Py_plot_rescue(self._resistance, temperature, self._distance, image_name)
                                     self._plot_generated = True
                                     # determine the exact visual explanation to show based on victim and explanation condition
-                                    if self._condition == 'shap':
+                                    if self._condition == 'baseline':
                                         image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
-                                    if self._condition == 'util':
-                                        if self._temperature_cat != 'higher':
-                                            if 'elderly man' in vic:
-                                                image_name = "<img src='/static/images/util_plots/util-rescue-low-granddad.svg'/>"                                            
-                                            if 'elderly woman' in vic:
-                                                image_name = "<img src='/static/images/util_plots/util-rescue-low-grandma.svg'/>" 
-                                            if 'injured woman' in vic:
-                                                image_name = "<img src='/static/images/util_plots/util-rescue-low-woman.svg'/>" 
-                                            if 'injured man' in vic:
-                                                image_name = "<img src='/static/images/util_plots/util-rescue-low-man.svg'/>" 
-                                        else:
-                                            if 'elderly man' in vic:
-                                                image_name = "<img src='/static/images/util_plots/util-rescue-high-granddad.svg'/>"                                            
-                                            if 'elderly woman' in vic:
-                                                image_name = "<img src='/static/images/util_plots/util-rescue-high-grandma.svg'/>" 
-                                            if 'injured woman' in vic:
-                                                image_name = "<img src='/static/images/util_plots/util-rescue-high-woman.svg'/>" 
-                                            if 'injured man' in vic:
-                                                image_name = "<img src='/static/images/util_plots/util-rescue-high-man.svg'/>" 
+                                    
                                     # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
-                                    if self._sensitivity > self._threshold:
-                                        if self._condition == 'shap':
+                                    if self._sensitivity > 4.1:
+                                        if self._condition == 'baseline':
                                             self._send_message('I have found ' + vic + ' who I cannot evacuate to safety myself. \
                                                                 We should decide whether to send in a fire fighter to rescue this victim, or if sending one in is too dangerous. \
                                                                 Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                                 is above my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                                 + image_name, self._name)
-                                        if self._condition == 'util':
-                                            self._send_message('I have found ' + vic + ' who I cannot evacuate to safety myself. \
-                                                                We should decide whether to send in a fire fighter to rescue this victim, or if sending one in is too dangerous. \
-                                                                Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                                is above my allocation threshold. These are the positive and negative consequences of both decision options: \n \n ' \
-                                                                + image_name, self._name)
-                                        if self._condition == 'baseline':
-                                            self._send_message('I have found ' + vic + ' who I cannot evacuate to safety myself. \
-                                                                We should decide whether to send in a fire fighter to rescue this victim, or if sending one in is too dangerous. \
-                                                                Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                                is above my allocation threshold.', self._name)
+                                        # ADD YOUR EXPLANATIONS HERE
+                                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                            print('To be implemented by students')
+
                                         # allocate to human and keep track of time to ensure enough reading time of the explanation
                                         self._decide = 'human'
                                         self._time = int(self._second)
                                         self._phase = Phase.RESCUE
                                         return Idle.__name__, {'action_duration': 0}
                                     # allocate to robot if the predicted moral sensitivity is lower than or equal to the allocation threshold
-                                    if self._sensitivity <= self._threshold:
-                                        if self._condition == 'shap':
+                                    if self._sensitivity <= 4.1:
+                                        if self._condition == 'baseline':
                                             self._send_message('I have found ' + vic + ' who I cannot evacuate to safety myself. \
                                                                 We should decide whether to send in a fire fighter to rescue this victim, or if sending one in is too dangerous. \
                                                                 I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                                 is below my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                                 + image_name, self._name)
-                                        if self._condition == 'util':
-                                            self._send_message('I have found ' + vic + ' who I cannot evacuate to safety myself. \
-                                                                We should decide whether to send in a fire fighter to rescue this victim, or if sending one in is too dangerous. \
-                                                                I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                                is below my allocation threshold. These are the positive and negative consequences of both decision options: \n \n ' \
-                                                                + image_name, self._name)
-                                        if self._condition == 'baseline':
-                                            self._send_message('I have found ' + vic + ' who I cannot evacuate to safety myself. \
-                                                                We should decide whether to send in a fire fighter to rescue this victim, or if sending one in is too dangerous. \
-                                                                I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                                is below my allocation threshold.', self._name)
+                                        # ADD YOUR EXPLANATIONS HERE
+                                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                            print('To be implemented by students')
+
                                         # allocate to robot and keep track of time to ensure enough reading time for the visual explanations
                                         self._decide = self._name
                                         self._plot_times.append(self._time_left - self._resistance)
@@ -1084,63 +980,38 @@ class robot(custom_agent_brain):
                             self._sensitivity = R_to_Py_plot_priority(len(self._room_victims), self._smoke, self._location_cat, image_name)
                             self._plot_generated = True
                             # determine the exact visual explanation to show based on explanation condition and victim type
-                            if self._condition == 'shap':
+                            if self._condition == 'baseline':
                                 image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
-                            if self._condition == 'util':
-                                if len(self._room_victims) == 1:
-                                    if 'elderly man' in self._recent_victim:
-                                        image_name = "<img src='/static/images/util_plots/util-evacuate-granddad.svg'/>"
-                                    if 'elderly woman' in self._recent_victim:
-                                        image_name = "<img src='/static/images/util_plots/util-evacuate-grandma.svg'/>"
-                                    if 'injured man' in self._recent_victim:
-                                        image_name = "<img src='/static/images/util_plots/util-evacuate-man.svg'/>"
-                                    if 'injured woman' in self._recent_victim:
-                                        image_name = "<img src='/static/images/util_plots/util-evacuate-woman.svg'/>"
-                                if len(self._room_victims) > 1:
-                                    image_name = "<img src='/static/images/util_plots/util-evacuate-multiple.svg'/>"
+                            
                             # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
-                            if self._sensitivity > self._threshold:
-                                if self._condition == 'shap':
+                            if self._sensitivity > 4.1:
+                                if self._condition == 'baseline':
                                     self._send_message('I have found ' + str(len(self._room_victims)) + ' mildly injured ' + self._vic_string + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
                                                         We should decide whether to first extinguish the fire or evacuate the ' + self._vic_string + '. \
                                                         Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                         is above my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                         + image_name, self._name)
-                                if self._condition == 'util':
-                                    self._send_message('I have found ' + str(len(self._room_victims)) + ' mildly injured ' + self._vic_string + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
-                                                        We should decide whether to first extinguish the fire or evacuate the ' + self._vic_string + '. \
-                                                        Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                        is above my allocation threshold. These are the positive and negative consequences of both decision options: \n \n ' \
-                                                        + image_name, self._name)
-                                if self._condition == 'baseline':
-                                    self._send_message('I have found ' + str(len(self._room_victims)) + ' mildly injured ' + self._vic_string + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
-                                                        We should decide whether to first extinguish the fire or evacuate the ' + self._vic_string + '. \
-                                                        Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                        is above my allocation threshold.', self._name)
+                                # ADD YOUR EXPLANATIONS HERE
+                                if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                    print('To be implemented by students')
+
                                 # allocate to human and keep track of time to ensure enough reading time for the visual explanations
                                 self._decide = 'human'
                                 self._time = int(self._second)
                                 self._phase = Phase.PRIORITY
                                 return Idle.__name__, {'action_duration': 0}
                             # allocate decision making to the robot if the predicted moral sensitivity is lower than or equal to the allocation threshold
-                            if self._sensitivity <= self._threshold:
-                                if self._condition == 'shap':
+                            if self._sensitivity <= 4.1:
+                                if self._condition == 'baseline':
                                     self._send_message('I have found ' + str(len(self._room_victims)) + ' mildly injured ' + self._vic_string + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
                                                         We should decide whether to first extinguish the fire or evacuate the ' + self._vic_string + '. \
                                                         I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                         is below my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                         + image_name, self._name)
-                                if self._condition == 'util':
-                                    self._send_message('I have found ' + str(len(self._room_victims)) + ' mildly injured ' + self._vic_string + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
-                                                        We should decide whether to first extinguish the fire or evacuate the ' + self._vic_string + '. \
-                                                        I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                        is below my allocation threshold. These are the positive and negative consequences of both decision options: \n \n ' \
-                                                        + image_name, self._name)
-                                if self._condition == 'baseline':
-                                    self._send_message('I have found ' + str(len(self._room_victims)) + ' mildly injured ' + self._vic_string + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
-                                                        We should decide whether to first extinguish the fire or evacuate the ' + self._vic_string + '. \
-                                                        I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
-                                                        is below my allocation threshold.', self._name)
+                                # ADD YOUR EXPLANATIONS HERE
+                                if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                    print('To be implemented by students')
+
                                 # allocate to robot and keep track of time to ensure enough reading time for the visual explanation
                                 self._decide = self._name
                                 self._plot_times.append(self._time_left - self._resistance)
@@ -1321,10 +1192,7 @@ class robot(custom_agent_brain):
                             if self.received_messages_content and self.received_messages_content[-1] == 'Extinguish':
                                 self._decided_time = int(self._second)
                                 self._send_message('Extinguishing the fire in office ' + self._door['room_name'].split()[-1] + ' first.', self._name)
-                                if self._name == 'Brutus':
-                                    self.agent_properties["img_name"] = "/images/brutus-extinguish.svg"
-                                if self._name == 'Titus':
-                                    self.agent_properties["img_name"] = "/images/extinguish-titus.svg"
+                                self.agent_properties["img_name"] = "/images/extinguish-titus.svg"
                                 self.agent_properties["visualize_size"] = 1.8
                                 for info in state.values():
                                     if 'class_inheritance' in info and 'FireObject' in info['class_inheritance'] and 'fire' in info['obj_id']:
@@ -1333,10 +1201,7 @@ class robot(custom_agent_brain):
                                 return Idle.__name__, {'action_duration': 0}
                             # wait 5 seconds before removing the object/extinguishing the fire because MATRX's action duration did not work
                             if self._decided_time and int(self._second) >= self._decided_time + 5 and self._id and state[{'obj_id': self._id}]:
-                                if self._name == 'Brutus':
-                                    self.agent_properties["img_name"] = "/images/robot-final4.svg"
-                                if self._name == 'Titus':
-                                    self.agent_properties["img_name"] = "/images/final-titus2.svg"
+                                self.agent_properties["img_name"] = "/images/final-titus2.svg"
                                 self.agent_properties["visualize_size"] = 1.1
                                 if self._fire_location not in self._extinguished_fire_locations:
                                     self._extinguished_fire_locations.append(self._fire_location)
@@ -1388,10 +1253,7 @@ class robot(custom_agent_brain):
                                     self._send_message('Extinguishing the fire in office ' + self._door['room_name'].split()[-1] + ' first because these are the general guidelines.', self._name)
                                     self._decided_time = int(self._second)
                                     self._waiting = True
-                                    if self._name == 'Brutus':
-                                        self.agent_properties["img_name"] = "/images/brutus-extinguish.svg"
-                                    if self._name == 'Titus':
-                                        self.agent_properties["img_name"] = "/images/extinguish-titus.svg"
+                                    self.agent_properties["img_name"] = "/images/extinguish-titus.svg"
                                     self.agent_properties["visualize_size"] = 1.8
                                     for info in state.values():
                                         if 'class_inheritance' in info and 'FireObject' in info['class_inheritance'] and 'fire' in info['obj_id']:
@@ -1400,10 +1262,7 @@ class robot(custom_agent_brain):
                                     return Idle.__name__, {'action_duration': 0}
                                 # remove object/extinguish fire after 5 seconds of waiting time
                                 if self._decided_time and int(self._second) >= self._decided_time + 5 and self._id and state[{'obj_id': self._id}]:
-                                    if self._name == 'Brutus':
-                                        self.agent_properties["img_name"] = "/images/robot-final4.svg"
-                                    if self._name == 'Titus':
-                                        self.agent_properties["img_name"] = "/images/final-titus2.svg"
+                                    self.agent_properties["img_name"] = "/images/final-titus2.svg"
                                     self.agent_properties["visualize_size"] = 1.1
                                     # keep track of the extinguished fires as it determine the temperature in the building
                                     if self._fire_location not in self._extinguished_fire_locations:

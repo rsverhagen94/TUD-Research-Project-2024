@@ -68,7 +68,7 @@ def add_agents(builder, name, condition, exp_version, resistance, no_fires, vict
                           img_name = "/images/final-titus2.svg", visualize_when_busy = True, visualize_size = 1.1)
     if name == 'Brutus':  
         builder.add_agent(loc, brain, team = "Team 1", name = name, sense_capability = sense_capability, is_traversable = True, 
-                          img_name = "/images/robot-final4.svg", visualize_when_busy = True, visualize_size = 1.1)
+                          img_name = "/images/final-titus2.svg", visualize_when_busy = True, visualize_size = 1.1)
     builder.add_agent((0, 12), brain2, team = "Team 1", name = "fire fighter 1", sense_capability = sense_capability, is_traversable = True, 
                       img_name = "/images/rescue-man-final3.svg", visualize_when_busy = True, visualize_opacity = 0)
     builder.add_agent((0, 13), brain3, team = "Team 1", name = "fire fighter 3", sense_capability = sense_capability, is_traversable = True, 

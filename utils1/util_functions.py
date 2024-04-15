@@ -3,7 +3,7 @@ from rpy2 import robjects
     
 def R_to_Py_plot_priority(people, smoke, location, image_name):
     r_script = (f'''
-                data <- read_excel("/home/ruben/Downloads/moral sensitivity survey data 4.xlsx")
+                data <- read_excel("data/moral_sensitivity_survey_data.xlsx")
                 data$situation <- as.factor(data$situation)
                 data$location <- as.factor(data$location)
                 data$smoke <- as.factor(data$smoke)
@@ -43,7 +43,8 @@ def R_to_Py_plot_priority(people, smoke, location, image_name):
                 data_plot$rank[data_plot$rank < original_rank] <- data_plot$rank[data_plot$rank < original_rank] + 1
                 data_plot$rank[idx] <- 1
                 order_indices <- order(data_plot$rank)
-                data_plot$variable <- data_plot$variable[order_indices]
+                data_plot <- data_plot[order_indices, ]
+                data_plot$variable <- factor(data_plot$variable, levels = unique(data_plot$variable))
                 pl <- ggplot(data_plot, aes(x = variable, y = phi, fill = ifelse(data_plot$variable == "none", "#3E6F9F", ifelse(data_plot$phi >= 0, "#dc4c5d", "#117733")))) +
                 geom_bar(stat = "identity") +
                 geom_text(aes(label = ifelse(data_plot$variable=="none", phi, ifelse(data_plot$phi>=0, paste("+", phi, sep=""), paste("-", abs(phi)))),
@@ -89,7 +90,7 @@ def R_to_Py_plot_priority(people, smoke, location, image_name):
 
 def R_to_Py_plot_tactic(people, location, resistance, image_name):
     r_script = (f'''
-                data <- read_excel("/home/ruben/Downloads/moral sensitivity survey data 4.xlsx")
+                data <- read_excel("data/moral_sensitivity_survey_data.xlsx")
                 data$situation <- as.factor(data$situation)
                 data$location <- as.factor(data$location)
                 data_subset <- subset(data, data$situation=="5"|data$situation=="7")
@@ -130,7 +131,8 @@ def R_to_Py_plot_tactic(people, location, resistance, image_name):
                 data_plot$rank[data_plot$rank < original_rank] <- data_plot$rank[data_plot$rank < original_rank] + 1
                 data_plot$rank[idx] <- 1
                 order_indices <- order(data_plot$rank)
-                data_plot$variable <- data_plot$variable[order_indices]
+                data_plot <- data_plot[order_indices, ]
+                data_plot$variable <- factor(data_plot$variable, levels = unique(data_plot$variable))
                 pl <- ggplot(data_plot, aes(x = variable, y = phi, fill = ifelse(data_plot$variable == "none", "#3E6F9F", ifelse(data_plot$phi >= 0, "#dc4c5d", "#117733")))) +
                 geom_bar(stat = "identity") +
                 geom_text(aes(label = ifelse(data_plot$variable=="none", phi, ifelse(data_plot$phi>=0, paste("+", phi, sep=""), paste("-", abs(phi)))),
@@ -177,7 +179,7 @@ def R_to_Py_plot_tactic(people, location, resistance, image_name):
     
 def R_to_Py_plot_locate(people, resistance, temperature, image_name):
     r_script = (f'''
-                data <- read_excel("/home/ruben/Downloads/moral sensitivity survey data 4.xlsx")
+                data <- read_excel("data/moral_sensitivity_survey_data.xlsx")
                 data$situation <- as.factor(data$situation)
                 data$temperature <- as.factor(data$temperature)
                 data_subset <- subset(data, data$situation=="2"|data$situation=="4")
@@ -222,7 +224,8 @@ def R_to_Py_plot_locate(people, resistance, temperature, image_name):
                 data_plot$rank[data_plot$rank < original_rank] <- data_plot$rank[data_plot$rank < original_rank] + 1
                 data_plot$rank[idx] <- 1
                 order_indices <- order(data_plot$rank)
-                data_plot$variable <- data_plot$variable[order_indices]
+                data_plot <- data_plot[order_indices, ]
+                data_plot$variable <- factor(data_plot$variable, levels = unique(data_plot$variable))
                 pl <- ggplot(data_plot, aes(x = variable, y = phi, fill = ifelse(data_plot$variable == "none", "#3E6F9F", ifelse(data_plot$phi >= 0, "#dc4c5d", "#117733")))) +
                 geom_bar(stat = "identity") +
                 geom_text(aes(label = ifelse(data_plot$variable=="none", phi, ifelse(data_plot$phi>=0, paste("+", phi, sep=""), paste("-", abs(phi)))),
@@ -268,7 +271,7 @@ def R_to_Py_plot_locate(people, resistance, temperature, image_name):
 
 def R_to_Py_plot_rescue(resistance, temperature, distance, image_name):
     r_script = (f'''
-                data <- read_excel("/home/ruben/Downloads/moral sensitivity survey data 4.xlsx")
+                data <- read_excel("data/moral_sensitivity_survey_data.xlsx")
                 data$situation <- as.factor(data$situation)
                 data$temperature <- as.factor(data$temperature)
                 data$distance <- as.factor(data$distance)
@@ -314,7 +317,8 @@ def R_to_Py_plot_rescue(resistance, temperature, distance, image_name):
                 data_plot$rank[data_plot$rank < original_rank] <- data_plot$rank[data_plot$rank < original_rank] + 1
                 data_plot$rank[idx] <- 1
                 order_indices <- order(data_plot$rank)
-                data_plot$variable <- data_plot$variable[order_indices]
+                data_plot <- data_plot[order_indices, ]
+                data_plot$variable <- factor(data_plot$variable, levels = unique(data_plot$variable))
                 pl <- ggplot(data_plot, aes(x = variable, y = phi, fill = ifelse(data_plot$variable == "none", "#3E6F9F", ifelse(data_plot$phi >= 0, "#dc4c5d", "#117733")))) +
                 geom_bar(stat = "identity") +
                 geom_text(aes(label = ifelse(data_plot$variable=="none", phi, ifelse(data_plot$phi>=0, paste("+", phi, sep=""), paste("-", abs(phi)))),

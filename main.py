@@ -16,35 +16,17 @@ if __name__ == "__main__":
     if environment == 'trial':
         builder = create_builder(exp_version = 'trial', condition = 'tutorial')
     else:
-        print("\nEnter one of the conditions 'baseline', 'shap', or 'util':")
+        print("\nEnter one of the conditions 'baseline', 'adaptive', 'contrastive', 'global', 'on-demand', or 'textual':")
         condition = input()
-        if condition == 'shap' or condition == 'util' or condition == 'baseline':
-            print("\nEnter one of the 16 counterbalancing conditions:")
+        if condition == 'baseline':
+            print("\nEnter one of the 2 counterbalancing conditions:")
             counterbalance_condition = input()
-            if counterbalance_condition == '1' or counterbalance_condition == '2':
-                robot_order = ['Brutus'] * 2 + ['Titus'] * 2
-                task_order = [1, 4, 2, 3]
-            if counterbalance_condition == '3' or counterbalance_condition == '4':
-                robot_order = ['Titus'] * 2 + ['Brutus'] * 2
-                task_order = [1, 4, 2, 3]
-            if counterbalance_condition == '5' or counterbalance_condition == '6':
-                robot_order = ['Brutus'] * 2 + ['Titus'] * 2
-                task_order = [4, 2, 3, 1]
-            if counterbalance_condition == '7' or counterbalance_condition == '8':
-                robot_order = ['Titus'] * 2 + ['Brutus'] * 2
-                task_order = [4, 2, 3, 1]
-            if counterbalance_condition == '9' or counterbalance_condition == '10':
-                robot_order = ['Brutus'] * 2 + ['Titus'] * 2
-                task_order = [2, 3, 1, 4]
-            if counterbalance_condition == '11' or counterbalance_condition == '12':
-                robot_order = ['Titus'] * 2 + ['Brutus'] * 2
-                task_order = [2, 3, 1, 4]
-            if counterbalance_condition == '13' or counterbalance_condition == '14':
-                robot_order = ['Brutus'] * 2 + ['Titus'] * 2
-                task_order = [3, 1, 4, 2]
-            if counterbalance_condition == '15' or counterbalance_condition == '16':
-                robot_order = ['Titus'] * 2 + ['Brutus'] * 2
-                task_order = [3, 1, 4, 2]
+            if counterbalance_condition == '1':
+                robot_order = ['Brutus'] * 2
+                task_order = [2, 3]
+            if counterbalance_condition == '2':
+                robot_order = ['Brutus'] * 2
+                task_order = [3, 2]
 
             start_scenario = None
             media_folder = pathlib.Path().resolve()
@@ -92,17 +74,17 @@ if __name__ == "__main__":
                                 message_header = row
                                 continue
                             
-                            if row[6:17] != previous_row and row[15] != "":
+                            if row[6:10] != previous_row and row[11] != "":
                                 with open(fld + '/data/complete_data_decisions.csv', mode = 'a+') as csv_file:
                                     csv_writer = csv.writer(csv_file, delimiter = ';', quotechar='"', quoting = csv.QUOTE_MINIMAL)
-                                    if row[16] == 'CRR_ND_self' or row[16] == 'FRR_MD_self' or row[16] == 'CRR_ND_robot' or row[16] == 'CRR_MD_robot':
-                                        csv_writer.writerow([id, condition, counterbalance_condition, task_order[i], row[0], robot, row[16], 'no intervention', row[15]])
-                                    if row[16] == 'FR_ND_self' or row[16] == 'CR_MD_self':
-                                        csv_writer.writerow([id, condition, counterbalance_condition, task_order[i], row[0], robot, row[16], 'allocate to self', row[15]])
-                                    if row[16] == 'FR_MD_robot' or row[16] == 'FR_ND_robot':
-                                        csv_writer.writerow([id, condition, counterbalance_condition, task_order[i], row[0], robot, row[16], 'allocate to robot', row[15]])
+                                    if row[6] != previous_row[0] and row[8] != previous_row[2] and row[9] == previous_row[3]:
+                                        csv_writer.writerow([id, condition, counterbalance_condition, task_order[i], row[0], robot, 'no intervention', row[11]])
+                                    if row[6] != previous_row[0] and row[8] != previous_row[2] and row[9] != previous_row[3]:
+                                        csv_writer.writerow([id, condition, counterbalance_condition, task_order[i], row[0], robot, 'allocate to robot', row[11]]) 
+                                    if row[7] != previous_row[1] and row[8] != previous_row[2] and row[9] != previous_row[3]:
+                                        csv_writer.writerow([id, condition, counterbalance_condition, task_order[i], row[0], robot, 'allocate to self', row[11]])   
 
-                            previous_row = row[6:17]
+                            previous_row = row[6:10]
                             res = {message_header[i]: row[i] for i in range(len(message_header))}
                             message_contents.append(res)
 
@@ -118,18 +100,6 @@ if __name__ == "__main__":
                     robot_allocations = message_contents[-1]['total_allocations_robot']
                     total_interventions = message_contents[-1]['total_interventions']
                     disagreement_rate = message_contents[-1]['disagreement_rate']
-                    correct_behavior_rate = message_contents[-1]['correct_behavior_rate']
-                    incorrect_behavior_rate = message_contents[-1]['incorrect_behavior_rate']
-                    incorrect_intervention_rate = message_contents[-1]['incorrect_intervention_rate']
-                    correct_intervention_rate = message_contents[-1]['correct_intervention_rate']
-                    CRR_ND_self = message_contents[-1]['CRR_ND_self']
-                    FR_ND_self = message_contents[-1]['FR_ND_self']
-                    FRR_MD_self = message_contents[-1]['FRR_MD_self']
-                    CR_MD_self = message_contents[-1]['CR_MD_self']
-                    CRR_MD_robot = message_contents[-1]['CRR_MD_robot']
-                    FR_MD_robot = message_contents[-1]['FR_MD_robot']
-                    CRR_ND_robot = message_contents[-1]['CRR_ND_robot']
-                    FR_ND_robot = message_contents[-1]['FR_ND_robot']
 
                     print("Saving output...")
                     with open(os.path.join(recent_dir, 'world_1/output.csv'), mode= 'w') as csv_file:
@@ -138,21 +108,20 @@ if __name__ == "__main__":
                                              'disagreement_rate', 'correct_behavior_rate', 'incorrect_behavior_rate', 'correct_intervention_rate', 'incorrect_intervention_rate', 'firefighter_decisions', 
                                              'firefighter_danger', 'firefighter_danger_rate', 'CRR_ND_self', 'FR_ND_self', 'FRR_MD_self', 'CR_MD_self', 'CRR_MD_robot', 'FR_MD_robot', 'CRR_ND_robot', 'FR_ND_robot'])
 
-                        csv_writer.writerow([completeness, no_ticks, len(unique_robot_moves), no_messages_robot, no_messages_human, total_allocations, human_allocations, robot_allocations, total_interventions,
-                                             disagreement_rate, correct_behavior_rate, incorrect_behavior_rate, correct_intervention_rate, incorrect_intervention_rate, firefighter_decisions,
-                                             firefighter_danger, firefighter_danger_rate, CRR_ND_self, FR_ND_self, FRR_MD_self, CR_MD_self, CRR_MD_robot, FR_MD_robot, CRR_ND_robot, FR_ND_robot])
+                        csv_writer.writerow([completeness, no_ticks, len(unique_robot_moves), no_messages_robot, no_messages_human, total_allocations, human_allocations, 
+                                             robot_allocations, total_interventions, disagreement_rate, firefighter_decisions, firefighter_danger, firefighter_danger_rate])
                         
                     with open(fld + '/data/complete_data_performance.csv', mode = 'a+') as csv_file:
                         csv_writer = csv.writer(csv_file, delimiter = ';', quotechar='"', quoting = csv.QUOTE_MINIMAL)
                         csv_writer.writerow([id, condition, counterbalance_condition, task_order[i], row[0], robot, completeness, no_ticks, len(unique_robot_moves), no_messages_robot, no_messages_human, 
-                                             total_allocations, human_allocations, robot_allocations, total_interventions, disagreement_rate, correct_behavior_rate, incorrect_behavior_rate, correct_intervention_rate, 
-                                             incorrect_intervention_rate, firefighter_decisions, firefighter_danger, firefighter_danger_rate, CRR_ND_self, FR_ND_self, FRR_MD_self, CR_MD_self, CRR_MD_robot, FR_MD_robot, CRR_ND_robot, FR_ND_robot])
+                                             total_allocations, human_allocations, robot_allocations, total_interventions, disagreement_rate,  firefighter_decisions, firefighter_danger, firefighter_danger_rate])
 
             print("DONE!")
             print("Shutting down custom visualizer")
             r = requests.get("http://localhost:" + str(visualization_server.port) + "/shutdown_visualizer")
             vis_thread.join()
         else:
-            print("\nWrong condition name entered")
+            print("\nCondition yet to be implemented by students")
+            exit()
 
     builder.stop()
