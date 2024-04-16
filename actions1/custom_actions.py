@@ -470,22 +470,14 @@ class CarryObject(Action):
         #if 'critical' in object_id and 'bot' in agent_id:
             # change our image 
         #    reg_ag.change_property("img_name", "/images/carry-critical-robot.svg")
-        if 'mild' in object_id and 'brutus' in agent_id and 'elderly_man' in object_id:
-            reg_ag.change_property("img_name", "/images/evacuate-granddad-brutus.svg")
-        if 'mild' in object_id and 'brutus' in agent_id and 'elderly_woman' in object_id:
-            reg_ag.change_property("img_name", "/images/evacuate-grandma-brutus.svg")
-        if 'mild' in object_id and 'brutus' in agent_id and 'injured_man' in object_id:
-            reg_ag.change_property("img_name", "/images/evacuate-man-brutus.svg")
-        if 'mild' in object_id and 'brutus' in agent_id and 'injured_woman' in object_id:
-            reg_ag.change_property("img_name", "/images/evacuate-woman-brutus.svg")
 
-        if 'mild' in object_id and 'titus' in agent_id and 'elderly_man' in object_id:
+        if 'mild' in object_id and 'brutus' in agent_id and 'elderly_man' in object_id:
             reg_ag.change_property("img_name", "/images/evacuate-granddad-titus2.svg")
-        if 'mild' in object_id and 'titus' in agent_id and 'elderly_woman' in object_id:
+        if 'mild' in object_id and 'brutus' in agent_id and 'elderly_woman' in object_id:
             reg_ag.change_property("img_name", "/images/evacuate-grandma-titus2.svg")
-        if 'mild' in object_id and 'titus' in agent_id and 'injured_man' in object_id:
+        if 'mild' in object_id and 'brutus' in agent_id and 'injured_man' in object_id:
             reg_ag.change_property("img_name", "/images/evacuate-man-titus2.svg")
-        if 'mild' in object_id and 'titus' in agent_id and 'injured_woman' in object_id:
+        if 'mild' in object_id and 'brutus' in agent_id and 'injured_woman' in object_id:
             reg_ag.change_property("img_name", "/images/evacuate-woman-titus2.svg")
 
         if 'critical' in object_id and 'fire_fighter' in agent_id:
@@ -685,8 +677,6 @@ class Drop(Action):
         """
         reg_ag = grid_world.registered_agents[agent_id]
         if 'brutus' in agent_id:
-            reg_ag.change_property("img_name", "/images/robot-final4.svg")
-        if 'titus' in agent_id:
             reg_ag.change_property("img_name", "/images/final-titus2.svg")
         if 'fire_fighter' in agent_id:
             reg_ag.change_property("img_name", "/images/rescue-man-final3.svg")

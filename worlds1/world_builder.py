@@ -10,8 +10,10 @@ from matrx.actions.object_actions import RemoveObject
 from matrx.objects import EnvObject
 from matrx.world_builder import RandomProperty
 from matrx.goals import WorldGoal
+from agents1.tutorial_firefighter import tutorial_firefighter
 from agents1.firefighter import firefighter
 from agents1.robot import robot
+from agents1.tutorial_robot import tutorial_robot
 from actions1.custom_actions import RemoveObjectTogether
 from brains1.custom_human_brain import custom_human_brain
 from loggers.action_logger import action_logger
@@ -37,7 +39,7 @@ def add_drop_off_zones(builder, exp_version):
         builder.add_area((25, 9), width = 1, height = 8, name = "Drop off 1", visualize_opacity = 0, visualize_colour = "#e5ddd5", 
                          drop_zone_nr = 1, is_drop_zone = True, is_goal_block = False, is_collectable = False) 
     if exp_version == "trial":
-        builder.add_area((17, 7), width = 1, height = 4, name = "Drop off 1", visualize_opacity = 0.5, visualize_colour = "#1F262A", 
+        builder.add_area((12, 5), width = 1, height = 3, name = "Drop off 1", visualize_opacity = 0, visualize_colour = "#e5ddd5", 
                          drop_zone_nr = 1, is_drop_zone = True, is_goal_block = False, is_collectable = False) 
             
 def add_agents(builder, name, condition, exp_version, resistance, no_fires, victims, task, counterbalance_condition):
@@ -51,17 +53,22 @@ def add_agents(builder, name, condition, exp_version, resistance, no_fires, vict
     if exp_version == "experiment":
         brain = robot(name = name, condition = condition, resistance = resistance, no_fires = no_fires, 
                       victims = victims, task = task, counterbalance_condition = counterbalance_condition)
-        brain2 = firefighter(name = name, condition = condition, resistance = resistance, no_fires = no_fires, 
-                             victims = victims, task = task, counterbalance_condition = counterbalance_condition)
-        brain3 = firefighter(name = name, condition = condition, resistance = resistance, no_fires = no_fires, 
-                             victims = victims, task = task, counterbalance_condition = counterbalance_condition)
-        brain4 = firefighter(name = name, condition = condition, resistance = resistance, no_fires = no_fires, 
-                             victims = victims, task = task, counterbalance_condition = counterbalance_condition)
-
-    if exp_version == "experiment":
         loc = (24, 12)
+        brain2 = firefighter(name = name, condition = condition, resistance = resistance, no_fires = no_fires, 
+                            victims = victims, task = task, counterbalance_condition = counterbalance_condition)
+        brain3 = firefighter(name = name, condition = condition, resistance = resistance, no_fires = no_fires, 
+                            victims = victims, task = task, counterbalance_condition = counterbalance_condition)
+        brain4 = firefighter(name = name, condition = condition, resistance = resistance, no_fires = no_fires, 
+                            victims = victims, task = task, counterbalance_condition = counterbalance_condition)
     else:
-        loc = (16, 8)
+        brain = tutorial_robot(name = name, condition = condition, resistance = resistance, no_fires = no_fires, 
+                      victims = victims, task = task, counterbalance_condition = counterbalance_condition)
+        loc = (11, 6)
+        brain2 = tutorial_firefighter(name = name, condition = condition, resistance = resistance, no_fires = no_fires, 
+                            victims = victims, task = task, counterbalance_condition = counterbalance_condition)
+        brain3 = tutorial_firefighter(name = name, condition = condition, resistance = resistance, no_fires = no_fires, 
+                            victims = victims, task = task, counterbalance_condition = counterbalance_condition)
+        
 
     if name == 'Titus':  
         builder.add_agent(loc, brain, team = "Team 1", name = name, sense_capability = sense_capability, is_traversable = True, 
@@ -69,21 +76,27 @@ def add_agents(builder, name, condition, exp_version, resistance, no_fires, vict
     if name == 'Brutus':  
         builder.add_agent(loc, brain, team = "Team 1", name = name, sense_capability = sense_capability, is_traversable = True, 
                           img_name = "/images/final-titus2.svg", visualize_when_busy = True, visualize_size = 1.1)
-    builder.add_agent((0, 12), brain2, team = "Team 1", name = "fire fighter 1", sense_capability = sense_capability, is_traversable = True, 
-                      img_name = "/images/rescue-man-final3.svg", visualize_when_busy = True, visualize_opacity = 0)
-    builder.add_agent((0, 13), brain3, team = "Team 1", name = "fire fighter 3", sense_capability = sense_capability, is_traversable = True, 
-                      img_name = "/images/rescue-man-final3.svg", visualize_when_busy = True, visualize_opacity = 0)
-    builder.add_agent((0, 11), brain4, team = "Team 1", name = "fire fighter 2", sense_capability = sense_capability, is_traversable = True, 
-                      img_name = "/images/rescue-man-final3.svg", visualize_when_busy = True, visualize_opacity = 0)
+    if exp_version == "experiment":
+        builder.add_agent((0, 12), brain2, team = "Team 1", name = "fire fighter 1", sense_capability = sense_capability, is_traversable = True, 
+                        img_name = "/images/rescue-man-final3.svg", visualize_when_busy = True, visualize_opacity = 0)
+        builder.add_agent((0, 13), brain3, team = "Team 1", name = "fire fighter 3", sense_capability = sense_capability, is_traversable = True, 
+                        img_name = "/images/rescue-man-final3.svg", visualize_when_busy = True, visualize_opacity = 0)
+        builder.add_agent((0, 11), brain4, team = "Team 1", name = "fire fighter 2", sense_capability = sense_capability, is_traversable = True, 
+                        img_name = "/images/rescue-man-final3.svg", visualize_when_busy = True, visualize_opacity = 0)
+    else:
+        builder.add_agent((0, 5), brain2, team = "Team 1", name = "fire fighter 1", sense_capability = sense_capability, is_traversable = True, 
+                        img_name = "/images/rescue-man-final3.svg", visualize_when_busy = True, visualize_opacity = 0)
+        builder.add_agent((0, 7), brain3, team = "Team 1", name = "fire fighter 2", sense_capability = sense_capability, is_traversable = True, 
+                        img_name = "/images/rescue-man-final3.svg", visualize_when_busy = True, visualize_opacity = 0)
 
     # Add human agents
     brain = custom_human_brain(max_carry_objects = 1, grab_range = 1, drop_range = 0, remove_range = 1, fov_occlusion = True)
     if exp_version == "experiment":
         loc = (24, 13)
     else:
-        loc = (16, 9)
+        loc = (11, 7)
     builder.add_human_agent(loc, brain, team = "Team 1", name =  "Human", visualize_opacity = 0, key_action_map = key_action_map, 
-                            sense_capability = sense_capability, is_traversable = True, visualize_shape = 1, visualize_colour = '#e5ddd5', visualize_when_busy = False)
+                            sense_capability = sense_capability, is_traversable = True, visualize_shape = 1, visualize_colour = "#e5ddd5", visualize_when_busy = False)
 
 def create_builder(id, exp_version, name, condition, task, counterbalance_condition):
     # Set numpy's random generator
@@ -99,9 +112,48 @@ def create_builder(id, exp_version, name, condition, task, counterbalance_condit
         time = 720
 
     if exp_version == "trial":
+        resistance = 91
+        no_fires = 3
+        victims = 'known'
+
         goal = CollectionGoal(max_nr_ticks=10000000000)
-        builder = WorldBuilder(shape = [19,19], tick_duration = 0.5, run_matrx_api = True, random_seed = random_seed, 
-                               run_matrx_visualizer = False, verbose = False, simulation_goal =goal , visualization_bg_clr = '#9a9083')
+        builder = WorldBuilder(shape = [13,13], tick_duration = 0.5, run_matrx_api = True, random_seed = random_seed, 
+                               run_matrx_visualizer = False, verbose = False, simulation_goal =goal , visualization_bg_clr = "#e5ddd5")
+        builder.add_room(top_left_location = (0, 0), width = 5, height = 4, name = 'office 1', door_locations = [(2,3)], 
+                         doors_open = True, door_visualization_opacity = 0, wall_visualize_colour = "#8a8a8a", with_area_tiles = True, 
+                         area_visualize_colour = '#0008ff', area_visualize_opacity = 0.0, door_open_colour = '#e5ddd5', area_custom_properties = {'doormat': (2,4)})
+        builder.add_room(top_left_location = (6,0), width = 5, height = 4, name = 'office 2', door_locations = [(8,3)], 
+                         doors_open = True, door_visualization_opacity = 0, wall_visualize_colour = "#8a8a8a", with_area_tiles = True, 
+                         area_visualize_colour = '#0008ff', area_visualize_opacity = 0.0, door_open_colour = '#e5ddd5', area_custom_properties = {'doormat': (8,4)})
+        builder.add_room(top_left_location = (0,9), width = 5, height = 4, name = 'office 3', door_locations = [(2,9)], 
+                         doors_open = True, door_visualization_opacity = 0, wall_visualize_colour = "#8a8a8a", with_area_tiles = True, 
+                         area_visualize_colour = '#0008ff', area_visualize_opacity = 0.0, door_open_colour = '#e5ddd5', area_custom_properties = {'doormat': (2,8)})
+        builder.add_room(top_left_location = (6,9), width = 5, height = 4, name = 'office 4', door_locations = [(8,9)], 
+                         doors_open = True, door_visualization_opacity = 0, wall_visualize_colour = "#8a8a8a", with_area_tiles = True, 
+                         area_visualize_colour = '#0008ff', area_visualize_opacity = 0.0, door_open_colour = '#e5ddd5', area_custom_properties = {'doormat': (8,8)})
+        builder.add_object(location = [2,0], is_traversable = True, is_movable = False, name = "area 01 sign", img_name = "/images/sign01.svg", visualize_depth = 110, visualize_size = 0.5)
+        builder.add_object(location = [8,0], is_traversable = True, is_movable = False, name = "area 02 sign", img_name = "/images/sign02.svg", visualize_depth = 110, visualize_size = 0.55)
+        builder.add_object(location = [2,12], is_traversable = True, is_movable = False, name = "area 03 sign", img_name = "/images/sign03.svg", visualize_depth = 110, visualize_size = 0.55)
+        builder.add_object(location = [8,12], is_traversable = True, is_movable = False, name = "area 04 sign", img_name = "/images/sign04.svg", visualize_depth = 110, visualize_size = 0.55)
+        for loc in [(0,0), (0,1), (0,2), (0,3), (1,3), (3,3), (4,3), (4,2), (4,1), (4,0), (3,0), (2,0), (1,0),
+                    (6,0), (6,1), (6,2), (6,3), (7,3), (9,3), (10,3), (10,2), (10,1), (10,0), (9,0), (8,0), (7,0),
+                    (0,9), (0,10), (0,11), (0,12), (1,12), (2,12), (3,12), (4,12), (4,11), (4,10), (4,9), (3,9), (1,9),
+                    (6,9), (6,10), (6,11), (6,12), (7,12), (8,12), (9,12), (10,12), (10,11), (10,10), (10,9), (9,9), (7,9)]:
+            builder.add_object(loc, 'roof', EnvObject, is_traversable = True, is_movable = False, visualize_shape = 'img', img_name = "/images/wall6.png")        
+        
+        builder.add_object((3,11), 'critically injured woman in area 3', callable_class = CollectableBlock, visualize_shape = 'img', img_name = "/images/critically injured woman.svg")
+        builder.add_object((2,1), 'mildly injured elderly woman in area 1', callable_class = CollectableBlock, visualize_shape = 'img', img_name = "/images/mildly injured elderly woman.svg")
+        builder.add_object((3,1), 'mildly injured man in area 1', callable_class = CollectableBlock, visualize_shape = 'img', img_name = "/images/mildly injured man.svg")
+        builder.add_object((12,5), name = "Collect Block", callable_class = GhostBlock, visualize_shape = 'img', img_name = "/images/critically injured woman.svg", drop_zone_nr = 0, visualize_opacity = 0.5)
+        builder.add_object((12,6), name = "Collect Block", callable_class = GhostBlock, visualize_shape = 'img', img_name = "/images/mildly injured elderly woman.svg", drop_zone_nr = 0, visualize_opacity = 0.5)
+        builder.add_object((12,7), name = "Collect Block", callable_class = GhostBlock, visualize_shape = 'img', img_name = "/images/mildly injured man.svg", drop_zone_nr = 0, visualize_opacity = 0.5)
+        builder.add_object((8,2), 'fire', FireObject, visualize_shape = 'img', img_name = "/images/fire2.svg", visualize_size = 2, smoke = 'fast', is_traversable = True, is_movable = True)
+        builder.add_object((2,9), 'iron', IronObject, visualize_shape = 'img', img_name = "/images/girder.svg", visualize_size = 1, weight = 100, is_traversable = False, is_movable = True)
+        builder.add_object((3,2), 'fire', FireObject, visualize_shape = 'img', img_name = "/images/fire2.svg", visualize_size = 1.25, smoke = 'normal', is_traversable = True, is_movable = True)
+        builder.add_object((8,10), 'source', FireObject, visualize_shape = 'img', img_name = "/images/fire2.svg", visualize_size = 2, smoke = 'normal', is_traversable = True, is_movable = True)
+        builder.add_object(location = (8,9), name = 'smog', callable_class = SmokeObject, visualize_shape = 'img', img_name = "/images/smoke.svg", visualize_size = 1.25)
+        for i in [(8,8), (7,8), (6,8), (9,8), (9,7), (9,6), (8,7), (8,6), (7,7), (7,6), (6,7), (6,6), (10,8), (10,7), (10,6)]:
+            builder.add_object(location = i, name = 'smog', callable_class = SmokeObject, visualize_shape = 'img', img_name = "/images/smoke.svg", visualize_size = 1.75)
 
     # Create the goal
     if exp_version == "experiment":
