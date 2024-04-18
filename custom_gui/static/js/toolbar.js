@@ -527,7 +527,11 @@ function add_message(chatroom_ID, mssg) {
     mssg_content = mssg_content.replaceAll("tree", "<img src='/static/images/tree-fallen2.svg' height= 30 width=30/>");
 
     mssg_content = mssg_content.replaceAll("ABORTING TASK!", "<span style='font-weight:bold; color:red;'>ABORTING TASK!</span>");
-
+    mssg_content = mssg_content.replace(/ has been going on for (\d+)\s+minutes now/g, " has been going on for a while");
+    mssg_content = mssg_content.replace(/ deployment going on for (\d+)\s+minutes now/g, " deployment");
+    mssg_content = mssg_content.replace(/ that has been going on for (\d+)\s+minutes/g, "");
+    mssg_content = mssg_content.replace(/ after the defensive deployment of (\d+)\s+minutes/g, "");
+    mssg_content = mssg_content.replace(/ after the offensive deployment of (\d+)\s+minutes/g, "");
 
     // mssg_content = mssg_content.replaceAll("plot", "<img src='/static/images/sensitivity_plot.svg' />");
 

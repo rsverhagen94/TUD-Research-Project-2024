@@ -119,7 +119,7 @@ class tutorial_firefighter(custom_agent_brain):
                     self._navigator.add_waypoints(room_tiles)
                     self._phase = Phase.FOLLOW_ROOM_SEARCH_PATH
                 else:
-                    self._send_message('<b>ABORTING TASK!</b> The conditions are too dangerous for us to continue searching for the fire source.', agent_name.replace('_', ' ').capitalize())
+                    self._send_message('<b>ABORTING TASK!</b> The conditions are too dangerous for me to continue searching for the fire source in ' + self._area + '.', agent_name.replace('_', ' ').capitalize())
                     self.agent_properties["img_name"] = "/images/human-danger2.gif"
                     self.agent_properties["visualize_size"] = 2.0
                     self._phase = Phase.PLAN_EXIT
@@ -131,7 +131,13 @@ class tutorial_firefighter(custom_agent_brain):
                 if action != None:                   
                     for info in state.values():
                         if 'class_inheritance' in info and 'FireObject' in info['class_inheritance'] and 'source' in info['obj_id'] and self._location != 'found':
-                            self._send_message('Fire source located in ' + self._area + ' and pinned on the map.', agent_name.replace('_', ' ').capitalize())
+                            self._send_message('<b>Fire source</b> located in ' + self._area + ' and pinned on the map.', agent_name.replace('_', ' ').capitalize())
+                            self._location = 'found'
+                            action_kwargs = add_object([info['location']], "/images/source.svg", 2, 1, 'fire source in ' + self._area)
+                            self._phase = Phase.FOLLOW_ROOM_SEARCH_PATH
+                            return AddObject.__name__, action_kwargs
+                        if 'class_inheritance' in info and 'FireObject' in info['class_inheritance'] and 'fire' in info['obj_id'] and self._location != 'found':
+                            self._send_message('Fire located in ' + self._area + ' and pinned on the map.', agent_name.replace('_', ' ').capitalize())
                             self._location = 'found'
                             action_kwargs = add_object([info['location']], "/images/fire2.svg", 2, 1, 'fire source in ' + self._area)
                             self._phase = Phase.FOLLOW_ROOM_SEARCH_PATH
@@ -178,7 +184,7 @@ class tutorial_firefighter(custom_agent_brain):
                         if 'class_inheritance' in info and 'CollectableBlock' in info['class_inheritance']:
                             self._goal_victim = info['img_name'][8:-4]
                             self._send_message('Transporting ' + self._goal_victim + ' to the safe zone.', agent_name.replace('_', ' ').capitalize())
-                            return CarryObject.__name__, {'object_id': info['obj_id']}
+                            return CarryObject.__name__, {'object_id': info['obj_id'], 'action_duration': 0}
                 else:
                     for info in state.values():
                         if 'class_inheritance' in info and 'CollectableBlock' in info['class_inheritance']:

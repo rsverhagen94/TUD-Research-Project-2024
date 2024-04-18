@@ -83,7 +83,6 @@ class robot(custom_agent_brain):
         self._situation = None
         self._plot_generated = False
         self._reallocated = False
-        self._decided = False
         self._waiting = False
         self._evacuating = False
         self._started = False
@@ -127,10 +126,15 @@ class robot(custom_agent_brain):
         self._send_message('Counterbalancing condition ' + self._counterbalance_condition + ' name ' + self._name + ' threshold ' + str(4.1), self._name)
 
         # switch to offensive tactic when temperature is lower than threshold and people are found but not rescued
-        if self._tactic == 'defensive' and self._temperature != '>' and len(self._rescued_victims) != len(self._found_victims) and len(self._found_victims) == self._total_victims:
-            self._send_message('Switching to an offensive deployment after the defensive deployment of ' + str(self._defensive_deployment_time) + ' minutes, \
-                                because the temperature is no longer higher than the safety threshold and there are still victims that we found but did not rescue.', self._name)
+        if self._tactic == 'defensive' and self._temperature != '>' and len(self._rescued_victims) != len(self._found_victims) and len(self._found_victims) == self._total_victims and not self._waiting:
+            self._send_message("Switching to an offensive deployment because the temperature is no longer higher than the safety threshold and there are still victims that we found but did not rescue.", self._name)
+            self._waiting = True
+            self._decided_time = int(self._second) 
+        if self._tactic == 'defensive' and self._temperature != '>' and len(self._rescued_victims) != len(self._found_victims) and len(self._found_victims) == self._total_victims and self._decided_time and int(self._second) < self._decided_time + 5:
+            return None, {}
+        if self._tactic == 'defensive' and self._temperature != '>' and len(self._rescued_victims) != len(self._found_victims) and len(self._found_victims) == self._total_victims and self._decided_time and int(self._second) >= self._decided_time + 5:
             self._tactic = 'offensive'
+            self._waiting = False
             self._offensive_search_rounds += 1
             self._lost_victims = []
             self._send_messages = []
@@ -147,7 +151,7 @@ class robot(custom_agent_brain):
                     self._send_message('Found fire source in ' + self._current_room + '!', self._name)
                     self._fire_source_coords = info['location']
                     self._fire_locations[self._current_room] = info['location']
-                    action_kwargs = add_object([info['location']], "/images/fire2.svg", 2, 1, 'fire source in ' + self._current_room)
+                    action_kwargs = add_object([info['location']], "/images/source-final.svg", info['visualization']['size'], 1, 'fire source in ' + self._current_room)
                     return AddObject.__name__, action_kwargs
                 self._location = 'found'
                 self._smoke = info['smoke']
@@ -157,6 +161,8 @@ class robot(custom_agent_brain):
                 if info['location'] not in self._fire_locations.values() and self._current_room not in self._fire_locations.keys():
                     self._send_message('Found fire in ' + self._current_room + '.', self._name)
                     self._fire_locations[self._current_room] = info['location']
+                    action_kwargs = add_object([info['location']], "/images/fire2.svg", info['visualization']['size'], 1, 'fire in ' + self._current_room)
+                    return AddObject.__name__, action_kwargs
                 self._smoke = info['smoke']
                 if self._tactic == 'defensive':
                     self._phase = Phase.EXTINGUISH_CHECK
@@ -174,6 +180,8 @@ class robot(custom_agent_brain):
                     office = 'office ' + msg.split()[3]
                     if office not in self._searched_rooms_offensive:
                         self._searched_rooms_offensive.append(office)
+                if 'ABORTING' in msg and 'to continue searching for the fire source' in msg:
+                    self._searched_rooms_offensive.remove(msg.strip('.').split()[-2] + ' ' + msg.strip('.').split()[-1])
 
         # save the coordinates of the fire source
         if self._location == 'found':
@@ -253,9 +261,6 @@ class robot(custom_agent_brain):
                 if remaining_zones:
                     self._remaining_zones = remaining_zones
                     self._remaining = remaining
-                # remain idle if robot (thinks it) rescued all victims 
-                if not remaining_zones:
-                    return None, {}
                 # determine victim category used for predicting moral sensitivity
                 if self._victims == 'known':
                     self._total_victims = len(remaining_victims) + len(self._rescued_victims)
@@ -269,23 +274,38 @@ class robot(custom_agent_brain):
                     self._total_victims = '?'
                     self._total_victims_cat = 'unclear'
                 # switch to defensive if all offices have been searched and display total number of victims as it is no longer unknown
-                if self._tactic == 'offensive' and self._victims == 'unknown' and len(self._searched_rooms_offensive) == 14:
-                    self._tactic = 'defensive'
-                    self._victims = 'known'
+                if self._tactic == 'offensive' and self._victims == 'unknown' and len(self._searched_rooms_offensive) == 14 and not self._waiting:
                     self._total_victims = len(remaining_victims) + len(self._rescued_victims)
                     if self._total_victims - len(self._rescued_victims) == 1:
-                        self._send_message('Switching to a defensive deployment because we explored all offices and to make the conditions safer for the victim that we found but could not rescue.', self._name)
+                        self._send_message("Switching to a defensive deployment because we explored all offices and to make the conditions safer for the victim that we found but could not rescue.", self._name)
                     else:
-                        self._send_message('Switching to a defensive deployment because we explored all offices and to make the conditions safer for the victims that we found but could not rescue.', self._name)
-                # switch to defensive if all victims have been found but not rescued
-                if self._tactic == 'offensive' and self._victims == 'known' and len(self._found_victims) == self._total_victims and len(self._rescued_victims) != len(self._found_victims) and self._temperature == '>' and not self._evacuating:
+                        self._send_message("Switching to a defensive deployment because we explored all offices and to make the conditions safer for the victims that we found but could not rescue.", self._name)
+                    self._waiting = True
+                    self._decided_time = int(self._second)
+                if self._tactic == 'offensive' and self._victims == 'unknown' and len(self._searched_rooms_offensive) == 14 and self._decided_time and int(self._second) < self._decided_time + 5:
+                    return None, {}
+                if self._tactic == 'offensive' and self._victims == 'unknown' and len(self._searched_rooms_offensive) == 14 and self._decided_time and int(self._second) >= self._decided_time + 5:
                     self._tactic = 'defensive'
+                    self._victims = 'known'
+                    self._waiting = False
+                # switch to defensive if all victims have been found but not rescued
+                if self._tactic == 'offensive' and self._victims == 'known' and len(self._found_victims) == self._total_victims and len(self._rescued_victims) != len(self._found_victims) and self._temperature == '>' and not self._evacuating and not self._waiting:
                     if self._total_victims - len(self._rescued_victims) == 1:
-                        self._send_message('Switching to a defensive deployment to make the conditions safer for the victim that we found but could not rescue.', self._name)
+                        self._send_message("Switching to a defensive deployment to make the conditions safer for the victim that we found but could not rescue.", self._name)
                     else:
-                        self._send_message('Switching to a defensive deployment to make the conditions safer for the victims that we found but could not rescue.', self._name)
+                        self._send_message("Switching to a defensive deployment to make the conditions safer for the victims that we found but could not rescue.", self._name)
+                    self._waiting = True
+                    self._decided_time = int(self._second)
+                if self._tactic == 'offensive' and self._victims == 'known' and len(self._found_victims) == self._total_victims and len(self._rescued_victims) != len(self._found_victims) and self._temperature == '>' and not self._evacuating and self._decided_time and int(self._second) < self._decided_time + 5:
+                    return None, {}
+                if self._tactic == 'offensive' and self._victims == 'known' and len(self._found_victims) == self._total_victims and len(self._rescued_victims) != len(self._found_victims) and self._temperature == '>' and not self._evacuating and self._decided_time and int(self._second) >= self._decided_time + 5:
+                    self._waiting = False
+                    self._tactic = 'defensive'
                 # send hidden message used for GUI/displaying the number of rescued victims
                 self._send_message('Victims rescued: ' + str(len(self._rescued_victims)) + '/' + str(self._total_victims) + '.', self._name)
+                # remain idle if robot (thinks it) rescued all victims 
+                if not remaining_zones:
+                    return None, {}
                 # send intro message and wait for human response to start the task
                 self._send_message('If you are ready to begin the task, press the "Continue" button.', self._name)
                 if self.received_messages_content and self.received_messages_content[-1] != 'Continue' and not self._started or not self.received_messages_content and not self._started:
@@ -337,6 +357,9 @@ class robot(custom_agent_brain):
                 for info in state.values():    
                     if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'fire source' in info['name'] and self._tactic == 'defensive' \
                         and calculate_distances(self._current_location, info['location']) <= 3:
+                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5, 'action_duration': 0}  
+                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'fire in' in info['name'] and self._tactic == 'defensive' \
+                        and calculate_distances(self._current_location, info['location']) <= 3:
                         return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5, 'action_duration': 0}
                 # remove object/extinguish fire after 5 seconds
                 if self._decided_time and int(self._second) >= self._decided_time + 5 and self._id and state[{'obj_id': self._id}]:
@@ -387,8 +410,8 @@ class robot(custom_agent_brain):
                     if self._tactic == 'offensive':
                         self._deploy_time = self._offensive_deployment_time
                         if self._condition == 'baseline':
-                            self._send_message('My offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current offensive deployment, or switch to a defensive deployment. \
+                            self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to a defensive deployment. \
                                                 Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                 is above my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
@@ -399,8 +422,8 @@ class robot(custom_agent_brain):
                     if self._tactic == 'defensive':
                         self._deploy_time = self._defensive_deployment_time
                         if self._condition == 'baseline':
-                            self._send_message('My defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current defensive deployment, or switch to an offensive deployment. \
+                            self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to an offensive deployment. \
                                                 Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                 is above my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
@@ -422,8 +445,8 @@ class robot(custom_agent_brain):
                     if self._tactic == 'offensive':
                         self._deploy_time = self._offensive_deployment_time
                         if self._condition == 'baseline':
-                            self._send_message('My offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current offensive deployment, or switch to a defensive deployment. \
+                            self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to a defensive deployment. \
                                                 I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                 is below my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
@@ -434,8 +457,8 @@ class robot(custom_agent_brain):
                     if self._tactic == 'defensive':
                         self._deploy_time = self._defensive_deployment_time
                         if self._condition == 'baseline':
-                            self._send_message('My defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with the current defensive deployment, or switch to an offensive deployment. \
+                            self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to an offensive deployment. \
                                                 I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                 is below my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
@@ -558,8 +581,8 @@ class robot(custom_agent_brain):
                                 self._send_message('No intervention for decision with sensitivity ' + str(self._sensitivity) + ' allocated to ' + self._decide + ' at time ' + str(self._time), self._name)
                             # decision making based on robot logic/firefighting guidelines
                             if self._resistance < 5:
-                                self._send_message('Switching to a defensive deployment after the offensive deployment of ' + str(self._offensive_deployment_time) + ' minutes, \
-                                                    because the resistance to collapse is less than 5 minutes, making the chance of saving people and the building too low.', self._name)
+                                self._send_message("Switching to a defensive deployment after the offensive deployment of " + str(self._offensive_deployment_time) + " minutes \
+                                                    because the resistance to collapse is less than 5 minutes, making the chance of saving people and the building too low.", self._name)
                                 self._plot_times.append(self._time_left - self._resistance)
                                 self._tactic = 'defensive'
                                 self._decide = None
@@ -569,8 +592,8 @@ class robot(custom_agent_brain):
                                 if not self._evacuating:
                                     self._phase = Phase.FIND_NEXT_GOAL
                             else:
-                                self._send_message('Continuing with the offensive deployment going on for ' + str(self._offensive_deployment_time) + ' minutes now, \
-                                                    because there is still chance to save people and the building.', self._name)
+                                self._send_message("Continuing with the offensive deployment that has been going on for " + str(self._offensive_deployment_time) + " minutes \
+                                                    because there is still chance to save people and the building.", self._name)
                                 self._plot_times.append(self._time_left - self._resistance)
                                 self._tactic = 'offensive'
                                 self._decide = None
@@ -597,15 +620,15 @@ class robot(custom_agent_brain):
                                 self._send_message('No intervention for decision with sensitivity ' + str(self._sensitivity) + ' allocated to ' + self._decide + ' at time ' + str(self._time), self._name)
                             # decision making based on robot logic/firefighting guidelines
                             if self._resistance < 5:
-                                self._send_message('Continuing with the defensive deployment going on for ' + str(self._defensive_deployment_time) + ' minutes, \
-                                                    because the resistance to collapse is less than 5 minutes, making the chance of saving people and the building too low.', self._name)
+                                self._send_message("Continuing with the defensive deployment that has been going on for " + str(self._defensive_deployment_time) + " minutes \
+                                                    because the resistance to collapse is less than 5 minutes, making the chance of saving people and the building too low.", self._name)
                                 self._tactic = 'defensive'
                                 self._decide = None
                                 self._reallocated = False
                                 self._phase = self._last_phase
                             else:
-                                self._send_message('Switching to an offensive deployment after the defensive deployment of ' + str(self._defensive_deployment_time) + ' minutes, \
-                                                    because there is still chance to save people and the building.', self._name)
+                                self._send_message("Switching to an offensive deployment after the defensive deployment of " + str(self._defensive_deployment_time) + " minutes \
+                                                    because there is still chance to save people and the building.", self._name)
                                 self._plot_times.append(self._time_left - self._resistance)
                                 self._offensive_search_rounds += 1
                                 self._tactic = 'offensive'
@@ -640,7 +663,7 @@ class robot(custom_agent_brain):
                 # allocate decision making to human if predicted sensivitiy is higher than the allocation threshold
                 if self._sensitivity > 4.1:
                     if self._condition == 'baseline':
-                        self._send_message('The location of the fire source still has not been found, so we should decide whether to send in fire fighters to help locate the fire source \
+                        self._send_message('The fire source still has not been located, so we should decide whether to send in fire fighters to help locate the fire source \
                                             or if sending them in is too dangerous. Please make this decision because the predicted moral sensitivity of this situation \
                                             (<b>' + str(self._sensitivity) + '</b>) is above my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                             + image_name, self._name)
@@ -659,7 +682,7 @@ class robot(custom_agent_brain):
                 # allocate decision making to the robot if the predicted moral sensitivity is lower than or equal to the allocation threshold
                 if self._sensitivity <= 4.1:
                     if self._condition == 'baseline':
-                        self._send_message('The location of the fire source still has not been found, so we should decide whether to send in fire fighters to help locate the fire source \
+                        self._send_message('The fire source still has not been located, so we should decide whether to send in fire fighters to help locate the fire source \
                                             or if sending them in is too dangerous. I will make this decision because the predicted moral sensitivity of this situation \
                                             (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                             + image_name, self._name)
@@ -711,7 +734,7 @@ class robot(custom_agent_brain):
                                 # remain idle while fire fighters enter the building
                                 return None, {}
                             # continue with the mission if the fire fighters located the fire source
-                            if self.received_messages_content and 'pinned on the map' in self.received_messages_content[-1]:   
+                            if self.received_messages_content and 'pinned on the map' in self.received_messages_content[-1] or self.received_messages_content and 'ABORTING' in self.received_messages_content[-1]:   
                                 self._reallocated = False
                                 self._phase = self._last_phase
                                 return Idle.__name__, {'action_duration': 0}
@@ -746,7 +769,7 @@ class robot(custom_agent_brain):
                                                     + str(self._potential_source_offices[-1][1]) + ' in ' +  self._office_doors[self._potential_source_offices[-1]], self._name)
                                 return None, {}
                             # continue with the mission if firefighters located the fire source
-                            if self.received_messages_content and 'pinned on the map' in self.received_messages_content[-1]:   
+                            if self.received_messages_content and 'pinned on the map' in self.received_messages_content[-1] or self.received_messages_content and 'ABORTING' in self.received_messages_content[-1]:   
                                 self._reallocated = False
                                 self._phase = self._last_phase
                                 return Idle.__name__, {'action_duration': 0}
@@ -916,6 +939,8 @@ class robot(custom_agent_brain):
                                 if vic not in self._found_victims:
                                     self._found_victims.append(vic)
                                     self._victim_locations[vic] = {'location': info['location'], 'room': self._door['room_name'], 'obj_id': info['obj_id']}
+                                    action_kwargs = add_object([info['location']], info['img_name'], 0.9, 1, info['name'] + ' pinned')
+                                    return AddObject.__name__, action_kwargs
                                 if 'critical' in vic and not self._plot_generated:
                                     # determine which visual explanation to show when a critically injured victim is found
                                     image_name = "custom_gui/static/images/sensitivity_plots/plot_for_vic_" \
@@ -978,7 +1003,6 @@ class robot(custom_agent_brain):
                     return action, {}
                 # determine how many victims were found in the room to send the correct message
                 if self._room_victims:
-                    self._send_message('Found ' + str(self._room_victims) + ' in ' + self._door['room_name'] + '.', self._name)
                     if len(self._room_victims) == 1:
                         self._vic_string = 'victim'
                     if len(self._room_victims) > 1:
@@ -997,7 +1021,7 @@ class robot(custom_agent_brain):
                             # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
                             if self._sensitivity > 4.1:
                                 if self._condition == 'baseline':
-                                    self._send_message('I have found ' + str(len(self._room_victims)) + ' mildly injured ' + self._vic_string + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                    self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
                                                         We should decide whether to first extinguish the fire or evacuate the ' + self._vic_string + '. \
                                                         Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                         is above my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
@@ -1014,7 +1038,7 @@ class robot(custom_agent_brain):
                             # allocate decision making to the robot if the predicted moral sensitivity is lower than or equal to the allocation threshold
                             if self._sensitivity <= 4.1:
                                 if self._condition == 'baseline':
-                                    self._send_message('I have found ' + str(len(self._room_victims)) + ' mildly injured ' + self._vic_string + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                    self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
                                                         We should decide whether to first extinguish the fire or evacuate the ' + self._vic_string + '. \
                                                         I will make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
                                                         is below my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
@@ -1081,7 +1105,9 @@ class robot(custom_agent_brain):
                                     self._searched_rooms_defensive.append(self._door['room_name'])
                                 self._reallocated = False
                                 self._phase = Phase.FIND_NEXT_GOAL
-                                return Idle.__name__, {'action_duration': 0}
+                                for info in state.values():
+                                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'critically injured' in info['name'] and 'pinned' in info['name']:
+                                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5, 'action_duration': 0}
                             # determine what to do next when fire fighter had to abort rescuing because it was too dangerous
                             if self.received_messages_content and 'ABORTING' in self.received_messages_content[-1]:
                                 self._lost_victims.append(self._recent_victim)
@@ -1126,7 +1152,6 @@ class robot(custom_agent_brain):
                             # send in fire fighters to rescue if the situation is not too dangerous
                             if self._temperature_cat != 'higher' and 'Transporting' not in self.received_messages_content[-1] and 'ABORTING' not in self.received_messages_content[-1]:
                                 self._send_message('Sending in a fire fighter to rescue ' + self._recent_victim + ' because the temperature is lower than the safety threshold.', self._name)
-                                self._decided = True
                                 vic_x = str(self._victim_locations[self._recent_victim]['location'][0])
                                 vic_y = str(self._victim_locations[self._recent_victim]['location'][1])
                                 drop_x = str(self._remaining[self._recent_victim][0])
@@ -1143,9 +1168,10 @@ class robot(custom_agent_brain):
                                 if self._recent_victim not in self._rescued_victims:
                                     self._rescued_victims.append(self._recent_victim)
                                 self._reallocated = False
-                                self._decided = False
+                                for info in state.values():
+                                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'critically injured' in info['name'] and 'pinned' in info['name']:
+                                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5, 'action_duration': 0}
                                 self._phase = Phase.FIND_NEXT_GOAL
-                                return Idle.__name__, {'action_duration': 0}
                             # determine what to do next when fire fighters aborted rescue task because conditions were too dangerous
                             if self.received_messages_content and 'ABORTING' in self.received_messages_content[-1]:
                                 self._lost_victims.append(self._recent_victim)
@@ -1153,23 +1179,21 @@ class robot(custom_agent_brain):
                                     self._searched_rooms_offensive.append(self._door['room_name'])
                                     self._searched_rooms_defensive.append(self._door['room_name'])
                                 self._reallocated = False
-                                self._decided = False
                                 self._phase = Phase.FIND_NEXT_GOAL
                                 return Idle.__name__, {'action_duration': 0}
                             # otherwise, robot does not send in fire fighters to rescue because the conditions are too dangerous
+                            if self._temperature_cat == 'higher':
+                                self._send_message("Not sending in a fire fighter to rescue " + self._recent_victim + " because the temperature is higher than the safety threshold.", self._name)
+                                self._lost_victims.append(self._recent_victim)
+                                if self._door['room_name'] not in self._searched_rooms_offensive:
+                                    self._searched_rooms_offensive.append(self._door['room_name'])
+                                    self._searched_rooms_defensive.append(self._door['room_name'])
+                                self._reallocated = False
+                                self._phase = Phase.FIND_NEXT_GOAL
+                                return Idle.__name__, {'action_duration': 0}
+                            # remain idle until robot made its decision
                             else:
-                                if not self._decided: 
-                                    self._send_message('Not sending in a fire fighter to rescue ' + self._recent_victim + ' because the temperature is higher than the safety threshold.', self._name)
-                                    self._lost_victims.append(self._recent_victim)
-                                    if self._door['room_name'] not in self._searched_rooms_offensive:
-                                        self._searched_rooms_offensive.append(self._door['room_name'])
-                                        self._searched_rooms_defensive.append(self._door['room_name'])
-                                    self._reallocated = False
-                                    self._phase = Phase.FIND_NEXT_GOAL
-                                    return Idle.__name__, {'action_duration': 0}
-                                # remain idle until robot made its decision
-                                else:
-                                    return None, {}
+                                return None, {}
                         # remain idle while waiting
                         else:
                             return None, {}
@@ -1209,7 +1233,11 @@ class robot(custom_agent_brain):
                                     if 'class_inheritance' in info and 'FireObject' in info['class_inheritance'] and 'fire' in info['obj_id']:
                                         self._id = info['obj_id']
                                         self._fire_location = info['location']
-                                return Idle.__name__, {'action_duration': 0}
+                            # already remove fire object pinned on map while waiting
+                            if self._decided_time and int(self._second) < self._decided_time + 5:
+                                for info in state.values():
+                                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'fire in' in info['name']:
+                                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 1, 'action_duration': 0}
                             # wait 5 seconds before removing the object/extinguishing the fire because MATRX's action duration did not work
                             if self._decided_time and int(self._second) >= self._decided_time + 5 and self._id and state[{'obj_id': self._id}]:
                                 self.agent_properties["img_name"] = "/images/final-titus2.svg"
@@ -1253,7 +1281,7 @@ class robot(custom_agent_brain):
                             # evacuate victim(s) first is fire source is not located and smoke spreading fast
                             if self._location == '?' and self._smoke == 'fast':
                                 self._send_message('Evacuating the ' + self._vic_string + ' in office ' + self._door['room_name'].split()[-1] + ' first \
-                                                    because the fire source is not located yet and the smoke is spreading fast.', self._name)
+                                                    because the fire source is not located and the smoke is spreading fast.', self._name)
                                 self._reallocated = False
                                 self._phase = Phase.FIND_NEXT_GOAL
                                 return Idle.__name__, {'action_duration': 0}
@@ -1270,7 +1298,12 @@ class robot(custom_agent_brain):
                                         if 'class_inheritance' in info and 'FireObject' in info['class_inheritance'] and 'fire' in info['obj_id']:
                                             self._id = info['obj_id']
                                             self._fire_location = info['location']
-                                    return Idle.__name__, {'action_duration': 0}
+                                # already remove fire object pinned on map while waiting
+                                if self._decided_time and int(self._second) < self._decided_time + 5:
+                                    for info in state.values():
+                                        #if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'fire in' in info['name']:
+                                        if 'name' in info and 'fire in office ' + self._door['room_name'].split()[-1] in info['name']:
+                                            return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5, 'action_duration': 0}
                                 # remove object/extinguish fire after 5 seconds of waiting time
                                 if self._decided_time and int(self._second) >= self._decided_time + 5 and self._id and state[{'obj_id': self._id}]:
                                     self.agent_properties["img_name"] = "/images/final-titus2.svg"
@@ -1316,6 +1349,9 @@ class robot(custom_agent_brain):
             # phase for evacuating a mildly injured victim
             if Phase.TAKE_VICTIM == self._phase:
                 self._send_message('Evacuating ' + self._goal_victim + ' to safety.', self._name)
+                for info in state.values():
+                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and self._goal_victim in info['name'] and 'pinned' in info['name']:
+                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5, 'action_duration': 0}
                 self._evacuating = True
                 self._rescued_victims.append(self._goal_victim)
                 self._phase = Phase.PLAN_PATH_TO_DROPPOINT
