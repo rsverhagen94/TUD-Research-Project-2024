@@ -169,9 +169,21 @@ class robot(custom_agent_brain):
             if 'class_inheritance' in info and 'SmokeObject' in info['class_inheritance'] and 'smog' in info['obj_id']:
                 if info['location'] in self._office_doors.keys() and info['location'] not in self._potential_source_offices:
                     self._potential_source_offices.append(info['location'])
-        # check if fire fighters already found the fire source
-        if self.received_messages_content and 'Fire source located' in self.received_messages_content[-1] and 'pinned on the map' in self.received_messages_content[-1]:
-            self._location = 'found' 
+        # check if fire fighters already found the fire source or other fire and if yes save coordinates
+        if self.received_messages_content:
+            for msg in self.received_messages_content:
+                if '<b>Fire source</b> located' in msg and 'pinned on the map' in msg:
+                    self._location = 'found' 
+                    for info in state.values():
+                        if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'fire source' in info['name']:
+                            self._fire_source_coords = info['location']
+                            if info['location'] not in self._fire_locations.values() and 'office ' + info['name'].split()[-1] not in self._fire_locations.keys():
+                                self._fire_locations['office ' + info['name'].split()[-1]] = info['location']
+                if 'Fire located in' in msg and 'pinned on the map' in msg:
+                    for info in state.values():
+                        if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'fire in office ' + msg.split()[4] in info['name']:
+                            if info['location'] not in self._fire_locations.values() and 'office ' + info['name'].split()[-1] not in self._fire_locations.keys():
+                                self._fire_locations['office ' + info['name'].split()[-1]] = info['location']
 
         # check which offices fire fighters explored and add to memory
         if self.received_messages_content:
@@ -182,14 +194,6 @@ class robot(custom_agent_brain):
                         self._searched_rooms_offensive.append(office)
                 if 'ABORTING' in msg and 'to continue searching for the fire source' in msg:
                     self._searched_rooms_offensive.remove(msg.strip('.').split()[-2] + ' ' + msg.strip('.').split()[-1])
-
-        # save the coordinates of the fire source
-        if self._location == 'found':
-            for info in state.values():
-                if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'fire source' in info['name']:
-                    self._fire_source_coords = info['location']
-                    if info['location'] not in self._fire_locations.values() and 'office ' + info['name'].split()[-1] not in self._fire_locations.keys():
-                        self._fire_locations['office ' + info['name'].split()[-1]] = info['location']
 
         # determine the categorical values for the fire source location
         if self._location == '?':
@@ -307,11 +311,15 @@ class robot(custom_agent_brain):
                 if not remaining_zones:
                     return None, {}
                 # send intro message and wait for human response to start the task
-                self._send_message('If you are ready to begin the task, press the "Continue" button.', self._name)
+                if not self._started:
+                    self._send_message('If you are ready to begin the task, press the "Continue" button.', self._name)
                 if self.received_messages_content and self.received_messages_content[-1] != 'Continue' and not self._started or not self.received_messages_content and not self._started:
                     return None, {}
                 if self.received_messages_content and self.received_messages_content[-1] == 'Continue' or self._started:
                     self._started = True
+                    closest_distance = float('inf')
+                    closest_office = None
+                    goal_victim = None
                     # determine the next goal victim and location for a found victim
                     for vic in remaining_victims:
                         if vic in self._found_victims and vic not in self._lost_victims and self._tactic != 'defensive':
@@ -320,21 +328,36 @@ class robot(custom_agent_brain):
                             # directly move to a mildly injured victim to evacuate it
                             if 'mild' in self._goal_victim:
                                 self._phase = Phase.PLAN_PATH_TO_VICTIM
+                                return Idle.__name__, {'action_duration': 0}
                             # move to the area of a critically injured victim to decide again if he/she can be rescued
                             if 'critical' in self._goal_victim:
-                                self._door = state.get_room_doors(self._victim_locations[vic]['room'])[0]
-                                self._doormat = state.get_room(self._victim_locations[vic]['room'])[-1]['doormat']
-                                self._phase = Phase.PLAN_PATH_TO_ROOM
-                            return Idle.__name__, {'action_duration': 0}
+                                distance = calculate_distances(self._victim_locations[vic]['location'], self._current_location)
+                                if distance < closest_distance:
+                                    closest_distance = distance
+                                    closest_office = self._victim_locations[vic]['room']
+                                    goal_victim = vic
+                    if closest_office is not None and self._goal_victim and 'critical' in self._goal_victim:
+                        self._door = state.get_room_doors(closest_office)[0]
+                        self._doormat = state.get_room(closest_office)[-1]['doormat']
+                        self._goal_victim = goal_victim
+                        self._phase = Phase.PLAN_PATH_TO_ROOM
+                        return Idle.__name__, {'action_duration': 0}
                     # determine the next fire to extinguish when the current deployment tactic is defensive
                     if self._tactic == 'defensive' and self._fire_locations:
-                        for office, loc in sorted(self._fire_locations.items(), key=lambda x: int(x[0].split()[1])):
+                        closest_office = None
+                        closest_distance = float('inf')
+                        for office, loc in self._fire_locations.items():
                             if loc not in self._extinguished_fire_locations and not any(info['room'] == office for info in self._victim_locations.values()):
-                                self._goal_location = loc
-                                self._door = state.get_room_doors(office)[0]
-                                self._doormat = state.get_room(office)[-1]['doormat']
-                                self._phase = Phase.PLAN_PATH_TO_ROOM
-                                return Idle.__name__, {'action_duration': 0} 
+                                distance = calculate_distances(loc, self._current_location)
+                                if distance < closest_distance:
+                                    closest_distance = distance
+                                    closest_office = office
+                        if closest_office is not None:
+                            self._goal_location = self._fire_locations[closest_office]
+                            self._door = state.get_room_doors(closest_office)[0]
+                            self._doormat = state.get_room(closest_office)[-1]['doormat']
+                            self._phase = Phase.PLAN_PATH_TO_ROOM
+                            return Idle.__name__, {'action_duration': 0} 
                     # if no goal victim or fire has been identified, pick an unsearched room to explore    
                     self._phase = Phase.PICK_UNSEARCHED_ROOM
 
@@ -385,7 +408,7 @@ class robot(custom_agent_brain):
                 self._situation = 'switch 2'
             if self._time_left - self._resistance >= 36 and self._time_left - self._resistance <= 41 and 'switch 3' not in self._situations and len(self._found_victims) != self._total_victims and self._task != 1 and self._task != 3:
                 self._situation = 'switch 3'
-            if self._time_left - self._resistance >= 46 and self._time_left - self._resistance <= 51 and 'switch 4' not in self._situations and len(self._found_victims) != self._total_victims and self._task != 3 and self._task != 4:
+            if self._time_left - self._resistance >= 46 and self._time_left - self._resistance <= 51 and 'switch 4' not in self._situations and len(self._found_victims) != self._total_victims and self._task != 3 and self._task != 4 and self._task != 2:
                 self._situation = 'switch 4'
             if self._time_left - self._resistance >= 56 and self._time_left - self._resistance <= 61 and 'switch 5' not in self._situations and len(self._found_victims) != self._total_victims and self._task == 2:
                 self._situation = 'switch 5'
@@ -725,7 +748,6 @@ class robot(custom_agent_brain):
                                 self._waiting = False
                                 self._phase = self._last_phase
                             if self.received_messages_content and self.received_messages_content[-1] == 'Fire fighter':
-                                self._waiting = False
                                 self._send_message('Sending in fire fighters to help locate the fire source.', self._name)
                                 # send hidden message with potential fire source locations based on detected smoke, used by firefighters to navigate towards
                                 self._send_message('Target 1 is ' + str(self._potential_source_offices[0][0]) + ' and ' + str(self._potential_source_offices[0][1]) + ' in ' \
@@ -736,6 +758,7 @@ class robot(custom_agent_brain):
                             # continue with the mission if the fire fighters located the fire source
                             if self.received_messages_content and 'pinned on the map' in self.received_messages_content[-1] or self.received_messages_content and 'ABORTING' in self.received_messages_content[-1]:   
                                 self._reallocated = False
+                                self._waiting = False
                                 self._phase = self._last_phase
                                 return Idle.__name__, {'action_duration': 0}
                             # remain idle while the fire fighters are locating the fire source
@@ -939,7 +962,7 @@ class robot(custom_agent_brain):
                                 if vic not in self._found_victims:
                                     self._found_victims.append(vic)
                                     self._victim_locations[vic] = {'location': info['location'], 'room': self._door['room_name'], 'obj_id': info['obj_id']}
-                                    action_kwargs = add_object([info['location']], info['img_name'], 0.9, 1, info['name'] + ' pinned')
+                                    action_kwargs = add_object([info['location']], info['img_name'], 0.9, 1, vic + ' pinned')
                                     return AddObject.__name__, action_kwargs
                                 if 'critical' in vic and not self._plot_generated:
                                     # determine which visual explanation to show when a critically injured victim is found
@@ -1106,8 +1129,8 @@ class robot(custom_agent_brain):
                                 self._reallocated = False
                                 self._phase = Phase.FIND_NEXT_GOAL
                                 for info in state.values():
-                                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'critically injured' in info['name'] and 'pinned' in info['name']:
-                                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5, 'action_duration': 0}
+                                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and self._recent_victim in info['name'] and 'pinned' in info['name']:
+                                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5}
                             # determine what to do next when fire fighter had to abort rescuing because it was too dangerous
                             if self.received_messages_content and 'ABORTING' in self.received_messages_content[-1]:
                                 self._lost_victims.append(self._recent_victim)
@@ -1168,10 +1191,10 @@ class robot(custom_agent_brain):
                                 if self._recent_victim not in self._rescued_victims:
                                     self._rescued_victims.append(self._recent_victim)
                                 self._reallocated = False
-                                for info in state.values():
-                                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'critically injured' in info['name'] and 'pinned' in info['name']:
-                                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5, 'action_duration': 0}
                                 self._phase = Phase.FIND_NEXT_GOAL
+                                for info in state.values():
+                                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and self._recent_victim in info['name'] and 'pinned' in info['name']:
+                                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5}
                             # determine what to do next when fire fighters aborted rescue task because conditions were too dangerous
                             if self.received_messages_content and 'ABORTING' in self.received_messages_content[-1]:
                                 self._lost_victims.append(self._recent_victim)
@@ -1236,8 +1259,9 @@ class robot(custom_agent_brain):
                             # already remove fire object pinned on map while waiting
                             if self._decided_time and int(self._second) < self._decided_time + 5:
                                 for info in state.values():
-                                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'fire in' in info['name']:
-                                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 1, 'action_duration': 0}
+                                    #if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'fire in' in info['name']:
+                                    if 'name' in info and 'fire in office ' + self._door['room_name'].split()[-1] in info['name']:
+                                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5, 'action_duration': 0}
                             # wait 5 seconds before removing the object/extinguishing the fire because MATRX's action duration did not work
                             if self._decided_time and int(self._second) >= self._decided_time + 5 and self._id and state[{'obj_id': self._id}]:
                                 self.agent_properties["img_name"] = "/images/final-titus2.svg"
@@ -1344,18 +1368,20 @@ class robot(custom_agent_brain):
                 # execute all move actions
                 if action != None:
                     return action, {}
+                if action == None:
+                    for info in state.values():
+                        if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and self._goal_victim in info['name'] and 'pinned' in info['name']:
+                            self._phase = Phase.TAKE_VICTIM
+                            return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5}
                 self._phase = Phase.TAKE_VICTIM
             
             # phase for evacuating a mildly injured victim
             if Phase.TAKE_VICTIM == self._phase:
                 self._send_message('Evacuating ' + self._goal_victim + ' to safety.', self._name)
-                for info in state.values():
-                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and self._goal_victim in info['name'] and 'pinned' in info['name']:
-                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 5, 'action_duration': 0}
                 self._evacuating = True
                 self._rescued_victims.append(self._goal_victim)
                 self._phase = Phase.PLAN_PATH_TO_DROPPOINT
-                return CarryObject.__name__, {'object_id': self._victim_locations[self._goal_victim]['obj_id']}          
+                return CarryObject.__name__, {'object_id': self._victim_locations[self._goal_victim]['obj_id']}
 
             # phase for planning the path to the drop zone
             if Phase.PLAN_PATH_TO_DROPPOINT == self._phase:

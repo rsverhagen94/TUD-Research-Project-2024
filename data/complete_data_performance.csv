@@ -1,6 +1,1 @@
 id,explanation,counterbalance,task,threshold,robot,completeness,ticks,moves,robot_messages,human_messages,total_allocations,human_allocations,robot_allocations,total_interventions,disagreement_rate,firefighter_decisions,firefighter_danger,firefighter_danger_rate
-id;baseline;1;2;4.1;Brutus;0.0;9;5;2;1;0;0;0;0;0;0;0;0
-id;baseline;1;2;4.1;Brutus;0.3;431;153;42;8;5;4;1;3;0.6;1;0;0.0
-id;baseline;2;3;4.1;Brutus;0.125;125;36;12;3;2;2;0;0;0.0;0;0;0
-id;baseline;1;2;4.1;Brutus;0.0;4;1;1;0;0;0;0;0;0;0;0;0
-id;baseline;1;3;4.1;Brutus;0.0;4;1;1;0;0;0;0;0;0;0;0;0

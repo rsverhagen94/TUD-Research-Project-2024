@@ -52,7 +52,6 @@ if __name__ == "__main__":
 
                 if environment == "experiment":
                     fld = os.getcwd()
-                    print(fld)
                     recent_dir = max(glob.glob(os.path.join(fld, '*/counterbalance_' + counterbalance_condition + '/' + id + '/')), key = os.path.getmtime)
                     recent_dir = max(glob.glob(os.path.join(recent_dir, '*/')), key = os.path.getmtime)
                     action_file = glob.glob(os.path.join(recent_dir, 'world_1/action*'))[0]
@@ -85,7 +84,8 @@ if __name__ == "__main__":
                             if row[6:10] != previous_row and row[11] != "":
                                 with open(fld + '/data/complete_data_decisions.csv', mode = 'a+') as csv_file:
                                     csv_writer = csv.writer(csv_file, delimiter = ';', quotechar='"', quoting = csv.QUOTE_MINIMAL)
-                                    if row[6] != previous_row[0] and row[8] != previous_row[2] and row[9] == previous_row[3]:
+                                    if row[6] != previous_row[0] and row[8] != previous_row[2] and row[9] == previous_row[3] or \
+                                        row[7] != previous_row[1] and row[8] != previous_row[2] and row[9] == previous_row[3]:
                                         csv_writer.writerow([id, condition, counterbalance_condition, task_order[i], row[0], robot, 'no intervention', row[11]])
                                     if row[6] != previous_row[0] and row[8] != previous_row[2] and row[9] != previous_row[3]:
                                         csv_writer.writerow([id, condition, counterbalance_condition, task_order[i], row[0], robot, 'allocate to robot', row[11]]) 
@@ -112,9 +112,8 @@ if __name__ == "__main__":
                     print("Saving output...")
                     with open(os.path.join(recent_dir, 'world_1/output.csv'), mode= 'w') as csv_file:
                         csv_writer = csv.writer(csv_file, delimiter = ';', quotechar = '"', quoting = csv.QUOTE_MINIMAL)
-                        csv_writer.writerow(['completeness', 'ticks', 'moves', 'robot_messages', 'human_messages', 'total_allocations', 'human_allocations', 'robot_allocations', 'total_interventions', 
-                                             'disagreement_rate', 'correct_behavior_rate', 'incorrect_behavior_rate', 'correct_intervention_rate', 'incorrect_intervention_rate', 'firefighter_decisions', 
-                                             'firefighter_danger', 'firefighter_danger_rate', 'CRR_ND_self', 'FR_ND_self', 'FRR_MD_self', 'CR_MD_self', 'CRR_MD_robot', 'FR_MD_robot', 'CRR_ND_robot', 'FR_ND_robot'])
+                        csv_writer.writerow(['completeness', 'ticks', 'moves', 'robot_messages', 'human_messages', 'total_allocations', 'human_allocations', 'robot_allocations', 
+                                             'total_interventions', 'disagreement_rate', 'firefighter_decisions', 'firefighter_danger', 'firefighter_danger_rate'])
 
                         csv_writer.writerow([completeness, no_ticks, len(unique_robot_moves), no_messages_robot, no_messages_human, total_allocations, human_allocations, 
                                              robot_allocations, total_interventions, disagreement_rate, firefighter_decisions, firefighter_danger, firefighter_danger_rate])
@@ -124,10 +123,10 @@ if __name__ == "__main__":
                         csv_writer.writerow([id, condition, counterbalance_condition, task_order[i], row[0], robot, completeness, no_ticks, len(unique_robot_moves), no_messages_robot, no_messages_human, 
                                              total_allocations, human_allocations, robot_allocations, total_interventions, disagreement_rate,  firefighter_decisions, firefighter_danger, firefighter_danger_rate])
 
-            print("DONE!")
-            print("Shutting down custom visualizer")
-            r = requests.get("http://localhost:" + str(visualization_server.port) + "/shutdown_visualizer")
-            vis_thread.join()
+            #print("DONE!")
+            #print("Shutting down custom visualizer")
+            #r = requests.get("http://localhost:" + str(visualization_server.port) + "/shutdown_visualizer")
+            #vis_thread.join()
         else:
             print("\nCondition yet to be implemented by students")
             exit()

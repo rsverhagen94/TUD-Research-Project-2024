@@ -1,8 +1,1 @@
 id,explanation,counterbalance,task,threshold,robot,decision_cat,sensitivity
-id;baseline;1;2;4.1;Brutus;allocate to robot;4.4
-id;baseline;1;2;4.1;Brutus;no intervention;4.7
-id;baseline;1;2;4.1;Brutus;allocate to robot;4.3
-id;baseline;1;2;4.1;Brutus;no intervention;4.2
-id;baseline;1;2;4.1;Brutus;allocate to self;2.0
-id;baseline;2;3;4.1;Brutus;no intervention;4.5
-id;baseline;2;3;4.1;Brutus;no intervention;5.5
