@@ -1,2 +1,0 @@
-completeness;ticks;moves;robot_messages;human_messages;total_allocations;human_allocations;robot_allocations;total_interventions;disagreement_rate;correct_behavior_rate;incorrect_behavior_rate;correct_intervention_rate;incorrect_intervention_rate;firefighter_decisions;firefighter_danger;firefighter_danger_rate;CRR_ND_self;FR_ND_self;FRR_MD_self;CR_MD_self;CRR_MD_robot;FR_MD_robot;CRR_ND_robot;FR_ND_robot
-0.5714285714285714;720;320;55;4;10;3;7;0;0.0;0.6;0.4;0;0;1;0;0.0;3;0;4;0;3;0;;
