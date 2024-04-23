@@ -364,7 +364,16 @@ def R_to_Py_plot_rescue(resistance, temperature, distance, image_name):
     
 # move to utils file and call once when running main.py
 def load_R_to_Py():
-    r_script = (f'''
+    r_script = ('''
+                # List of required packages
+                required_packages <- c("readxl", "ggplot2", "dplyr", "rstatix", "ggpubr", "tidyverse", "gvlma", "lme4", "shapr", "ggtext", "ggdist")
+                
+                # Check if each package is installed, if not, install it
+                for (package in required_packages) {
+                    if (!(package %in% installed.packages())) {
+                        install.packages(package, dependencies = TRUE)
+                    }
+                }
                 # Load libraries
                 library('readxl')
                 library('ggplot2')
