@@ -389,7 +389,7 @@ def load_R_to_Py():
                 ''')
     robjects.r(r_script)
     
-def add_object(locs, image, size, opacity, name):
+def add_object(locs, image, size, opacity, name, is_traversable, is_movable):
     action_kwargs = {}
     add_objects = []
     for loc in locs:
@@ -399,6 +399,8 @@ def add_object(locs, image, size, opacity, name):
         obj_kwargs['visualize_size'] = size
         obj_kwargs['visualize_opacity'] = opacity
         obj_kwargs['name'] = name
+        obj_kwargs['is_traversable'] = is_traversable
+        obj_kwargs['is_movable'] = is_movable
         add_objects+=[obj_kwargs]
     action_kwargs['add_objects'] = add_objects
     return action_kwargs

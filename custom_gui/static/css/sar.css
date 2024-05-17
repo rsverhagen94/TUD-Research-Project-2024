@@ -1,343 +1,343 @@
 html {
-    height: 100%;
+  height: 100%;
 }
 
 #grid {
-    position: relative;
-    background-repeat: no-repeat;
-    background-size: cover;
-    z-index: 10000000000;
-    border-right: 2px solid black;
-    border-bottom: 2px solid black;
+  position: relative;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 10000000000;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
 }
 
 #grid .tile,
 #grid .object,
 #grid .object .shape {
-    position:absolute;
+  position:absolute;
 }
 
 /* Logo */
 
 #matrx_logo {
-    width: 103px;
-    height: 43px;
-    border-radius: 2px;
-    padding: 2px 5px;
+  width: 103px;
+  height: 43px;
+  border-radius: 2px;
+  padding: 2px 5px;
 }
 
 
 /* Toggle the start button to pause or vice versa if pressed */
 .hidden {
-    display: none;
+  display: none;
 }
 
 .agent_menu_preview,
 .god_preview {
-    display: inline-block;
-    margin-right: 10px;
-    width: 30px;
-    height: 30px;
+  display: inline-block;
+  margin-right: 10px;
+  width: 30px;
+  height: 30px;
 }
 
 .agent_menu_preview img {
-    max-height: 30px;
-    max-width: 30px;
-    height: auto;
-    width: auto;
+  max-height: 30px;
+  max-width: 30px;
+  height: auto;
+  width: auto;
 }
 
 #agent_dropdown .dropdown-item,
 #view_mode .dropdown-item {
-    padding: .4rem 1.5rem;
-    display: flex;
+  padding: .4rem 1.5rem;
+  display: flex;
 }
 
 
 /* Selection styling */
 .matrx_object_selected {
-    width: 110%;
-    z-index: 999;
-    position: absolute;
-    height: 110%;
-    left: -5%;
-    top: -5%;
-    pointer-events: none;
+  width: 110%;
+  z-index: 999;
+  position: absolute;
+  height: 110%;
+  left: -5%;
+  top: -5%;
+  pointer-events: none;
 }
 
 
 
 /* Chat styling */
 .new_chat_option {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .chat-notification {
-    background: #ffb100;
-    border-radius: 50%;
-    height: 8px;
-    width: 8px;
-    margin-left: 5px;
-    margin-bottom: 1px;
+  background: #ffb100;
+  border-radius: 50%;
+  height: 8px;
+  width: 8px;
+  margin-left: 5px;
+  margin-bottom: 1px;
 }
 
 
 .toolbar {
-  padding-top: 0.1em;
-  padding-bottom: 0.1em;
-  padding-left: 1em;
-  /* position: sticky; */
-  z-index: 100000000000;
+padding-top: 0.1em;
+padding-bottom: 0.1em;
+padding-left: 1em;
+/* position: sticky; */
+z-index: 100000000000;
 }
 
 .row {
-  margin-right: 0;
+margin-right: 0;
 }
 
 .tile.draw_mode:hover {
-  cursor: url("pencil-alt.svg") 0 15, pointer;
-  background-color: indianred;
+cursor: url("pencil-alt.svg") 0 15, pointer;
+background-color: indianred;
 }
 
 .tile.erase_mode:hover {
-  cursor: url("eraser.svg") 0 15, pointer;
+cursor: url("eraser.svg") 0 15, pointer;
 }
 
 .agent {
-  z-index: 1;
-  color: #fff;
-  background-color: #17a2b8;
+z-index: 1;
+color: #fff;
+background-color: #17a2b8;
 }
 
 .agent:hover {
-  cursor: pointer;
-  background-color: #138496;
+cursor: pointer;
+background-color: #138496;
 }
 
 .grid {
-  background-color: lightgray;
+background-color: lightgray;
 }
 
 .contact {
-  background-color:  rgb(229 221 213 / 95%);
-  color:  rgb(229 221 213 / 95%);
+background-color:  rgb(229 221 213 / 95%);
+color:  rgb(229 221 213 / 95%);
 }
 
 .contact:hover {
-  background-color:  rgb(229 221 213 / 95%);
-  color:  rgb(229 221 213 / 95%);
+background-color:  rgb(229 221 213 / 95%);
+color:  rgb(229 221 213 / 95%);
 }
 
 .contact_active {
-  background-color:  rgb(229 221 213 / 95%);
-  color:  rgb(229 221 213 / 95%);
+background-color:  rgb(229 221 213 / 95%);
+color:  rgb(229 221 213 / 95%);
 }
 
 #messages {
-    overflow-y: scroll;
-    max-height: 71vh;
-    margin-bottom: 5px;
+  overflow-y: scroll;
+  max-height: 71vh;
+  margin-bottom: 5px;
 }
 
 .full-width-hr {
-  margin-left: -25px; /* Adjust this value based on your layout's padding */
-  margin-right: -15px; /* Adjust this value based on your layout's padding */
-  width: auto; /* Allows the element to stretch beyond its container's padding */
-  border-bottom: 2px solid black;
+margin-left: -25px; /* Adjust this value based on your layout's padding */
+margin-right: -15px; /* Adjust this value based on your layout's padding */
+width: auto; /* Allows the element to stretch beyond its container's padding */
+border-bottom: 2px solid black;
 }
 
 .message_you {
-    color: #fff;
-    position: relative;
-    background: #414950;
-    border-radius: .4em;
-    padding: 0.375rem 0.75rem;
-    margin-bottom: 0.5em;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: 10px;
-    max-width: 90%;
+  color: #fff;
+  position: relative;
+  background: #414950;
+  border-radius: .4em;
+  padding: 0.375rem 0.75rem;
+  margin-bottom: 0.5em;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: 10px;
+  max-width: 90%;
 }
 
 .message_you:after {
-	content: '';
-	position: absolute;
-	right: 0;
-	top: 50%;
-	width: 0;
-	height: 0;
-	border: 8px solid transparent;
-	border-left-color: #414950;
-	border-right: 0;
-	border-top: 0;
-	margin-top: -4px;
-	margin-right: -8px;
+content: '';
+position: absolute;
+right: 0;
+top: 50%;
+width: 0;
+height: 0;
+border: 8px solid transparent;
+border-left-color: #414950;
+border-right: 0;
+border-top: 0;
+margin-top: -4px;
+margin-right: -8px;
 }
 
 .message_other {
-	position: relative;
-	background: white;
-	border-radius: .4em;
-    padding: 0.375rem 0.75rem;
-    margin-bottom: 0.5em;
-    width: fit-content;
-    margin-left: 10px;
-    color:black;
-    max-width: 90%;
+position: relative;
+background: white;
+border-radius: .4em;
+  padding: 0.375rem 0.75rem;
+  margin-bottom: 0.5em;
+  width: fit-content;
+  margin-left: 10px;
+  color:black;
+  max-width: 90%;
 }
 
 .center-image {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+display: flex;
+justify-content: center;
+align-items: center;
 }
 
 .message_other:after {
-  content: '';
-	position: absolute;
-	left: 0;
-	top: 50%;
-	width: 0;
-	height: 0;
-	border: 8px solid transparent;
-	border-right-color: white;
-	border-left: 0;
-	border-top: 0;
-	margin-top: -4px;
-	margin-left: -8px;
+content: '';
+position: absolute;
+left: 0;
+top: 50%;
+width: 0;
+height: 0;
+border: 8px solid transparent;
+border-right-color: white;
+border-left: 0;
+border-top: 0;
+margin-top: -4px;
+margin-left: -8px;
 }
 
 .form-control {
-  margin-bottom: 0.5em;
+margin-bottom: 0.5em;
 }
 
 h6 {
-  margin-top: -0.5em;
-  margin-bottom: -0.5em;
+margin-top: -0.5em;
+margin-bottom: -0.5em;
 }
 
 #chat {
-  background-color: rgb(229 221 213 / 95%);
-  padding-bottom: 1em;
-  padding-left: 0.5em;
-  padding-right: 0;
-  z-index: auto;
-  position: absolute;
-  top: 46px;
-  right: 0;
-  width: 100%;
-  max-width: 900px;
-  height: 93%;
-  border-left: 2px solid black;
-  border-bottom: 2px solid black;
+background-color: rgb(229 221 213 / 95%);
+padding-bottom: 1em;
+padding-left: 0.5em;
+padding-right: 0;
+z-index: auto;
+position: absolute;
+top: 46px;
+right: 0;
+width: 100%;
+max-width: 900px;
+height: 93%;
+border-left: 2px solid black;
+border-bottom: 2px solid black;
 }
 
 #chatrooms_list {
-     max-height: 90vh;
+   max-height: 90vh;
 }
 
 .object:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .chat-mssg-sender {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .matrx_object_busy {
-    position: absolute;
+  position: absolute;
 }
 
 .matrx_core_version {
-    position: absolute;
-    bottom: 0;
-    right: 10px;
-    font-size: 0.8em;
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+  font-size: 0.8em;
 }
 
 .disconnected_notification {
-    position:absolute;
-    left: 50%;
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
-    top: 10px;
-    color: red;
-    font-weight: bold;
-    font-size: 1.2rem;
+  position:absolute;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  top: 10px;
+  color: red;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
 .disconnected_notification span {
-    font-size: 1rem;
+  font-size: 1rem;
 }
 
 #chat_form_submit {
-    border: none;
-    background-color: #000000;
-    color: white;
+  border: none;
+  background-color: #000000;
+  color: white;
 
 }
 
 #chat_form_submit:hover {
-    background-color:#414950;
-    -webkit-transition: background-color 100ms linear;
-    -ms-transition: background-color 100ms linear;
-    transition: background-color 100ms linear;
-    border: none;
+  background-color:#414950;
+  -webkit-transition: background-color 100ms linear;
+  -ms-transition: background-color 100ms linear;
+  transition: background-color 100ms linear;
+  border: none;
 }
 
 /* subtile + context menu bug fix. Subtile objects only block when exactly on top of eachother. */
 .object {
-    pointer-events: none;
+  pointer-events: none;
 }
 
 .shape {
-    pointer-events: auto;
+  pointer-events: auto;
 }
 
 .center {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+margin: 0;
+position: absolute;
+top: 50%;
+left: 50%;
+-ms-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
 }
 
 /* Dropdown Button */
 .dropbtn {
-  background-color: #414950;
-  color: #414950;
-  border: none;
+background-color: #414950;
+color: #414950;
+border: none;
 }
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
-  position: relative;
-  display: inline-block;
-  /*
-  padding-right: 5px;
-  padding-bottom: 5px;
-  */
+position: relative;
+display: inline-block;
+/*
+padding-right: 5px;
+padding-bottom: 5px;
+*/
 }
 
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
-  display: none;
-  position: relative;
-  background-color: #414950;
-  min-width: 60px;
-  box-shadow: #414950;
-  z-index: 1;
-  border: none;
+display: none;
+position: relative;
+background-color: #414950;
+min-width: 60px;
+box-shadow: #414950;
+z-index: 1;
+border: none;
 }
 
 /* Links inside the dropdown */
 .dropdown-content a {
-  color: white;
-  padding: 8px 8px;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
+color: white;
+padding: 8px 8px;
+text-decoration: none;
+display: inline-block;
+font-size: 14px;
 }
 
 /* Change color of dropdown links on hover */
@@ -350,9 +350,9 @@ h6 {
 .dropdown:hover .dropbtn {background-color: #000000;}
 
 .btn-primary:hover{color:#fff;background-color:#000000;border-color:#000000}
-.btn-primary:focus,.btn-primary.focus{box-shadow:0 0 0 .2rem #000000}
+.btn-primary:focus,.btn-primary.focus{box-shadow:0 0 0 .2rem #e5ddd5}
 .btn-primary.disabled,
-.btn-primary:disabled{color:#fff;background-color:#000000;border-color:#000000}
+.btn-primary:disabled{color:#fff;background-color:#e5ddd5;border-color:#e5ddd5}
 .btn-primary:not(:disabled):not(.disabled):active,
 .btn-primary:not(:disabled):not(.disabled).active,
 .show>.btn-primary.dropdown-toggle{color:#fff;background-color:#000000;border-color:#000000}

@@ -32,16 +32,20 @@ class Phase(enum.Enum):
 
 
 class firefighter(custom_agent_brain):
-    def __init__(self, name, condition, resistance, no_fires, victims, task, counterbalance_condition):
-        super().__init__(name, condition, resistance, no_fires, victims, task, counterbalance_condition)
+    def __init__(self, name, condition, resistance, no_fires, victims, task):
+        super().__init__(name, condition, resistance, no_fires, victims, task)
         self._phase = Phase.WAIT_FOR_CALL
         self._resistance = resistance
         self._time_left = resistance
+        self._task = task
         self._no_fires = no_fires
         self._extinguished_fires = []
         self._send_messages = []
+        self._processed_messages = []
+        self._smoke_plums = []
         self._rescued = []
         self._modulos = []
+        self._added = []
         self._goal_victim = None
         self._decided = None
         self._location = '?'
@@ -58,31 +62,185 @@ class firefighter(custom_agent_brain):
         return state
 
     def decide_on_bw4t_action(self, state: State):
+        for info in state.values():
+            if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'smog' in info['obj_id'] and info['visualization']['size'] == 5:
+                if info not in self._smoke_plums:
+                    self._smoke_plums.append(info)
+        agent_name = state[self.agent_id]['obj_id']
+        
+        if self._resistance == 35 and self.received_messages_content and 'Extinguishing fire in office 06.' not in self.received_messages_content and agent_name == 'fire_fighter_1' and self._task == 1:
+            if (9,7) not in self._added:
+                self._added.append((9,7))
+                action_kwargs = add_object([(9,7)], "/images/smoke.svg", 1.75, 1, 'smog at 06', True, True)
+                return AddObject.__name__, action_kwargs
+            if (9,5) not in self._added:
+                self._added.append((9,5))
+                action_kwargs = add_object([(9,5)], "/images/smoke.svg", 5, 1, 'smog at 06', True, True)
+                return AddObject.__name__, action_kwargs
+        if self._resistance == 25 and self.received_messages_content and 'Extinguishing fire in office 05.' not in self.received_messages_content and agent_name == 'fire_fighter_1' and self._task == 2:
+            if (2,7) not in self._added:
+                self._added.append((2,7))
+                action_kwargs = add_object([(2,7)], "/images/smoke.svg", 1.75, 1, 'smog at 05', True, True)
+                return AddObject.__name__, action_kwargs
+            if (2,5) not in self._added:
+                self._added.append((2,5))
+                action_kwargs = add_object([(2,5)], "/images/smoke.svg", 5, 1, 'smog at 05', True, True)
+                return AddObject.__name__, action_kwargs
+
+
+        if self._task == 1 and self.received_messages_content and 'Extinguishing fire in office 07.' in self.received_messages_content:
+            if not state[{'obj_id': 'brutus', 'location': (16, 7)}]:
+                for info in state.values():
+                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'smog_at_07' in info['obj_id']:
+                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 100, 'action_duration': 0}
+        if self._task == 1 and self.received_messages_content and 'Extinguishing fire in office 12.' in self.received_messages_content:
+            if not state[{'obj_id': 'brutus', 'location': (9, 21)}]:
+                for info in state.values():
+                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'smog_at_12' in info['obj_id']:
+                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 100, 'action_duration': 0}
+        if self._task == 2 and self.received_messages_content and 'Extinguishing fire in office 14.' in self.received_messages_content:
+            if not state[{'obj_id': 'brutus', 'location': (23, 21)}]:
+                for info in state.values():
+                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'smog_at_14' in info['obj_id']:
+                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 100, 'action_duration': 0}
+        if self._task == 2 and self.received_messages_content and 'Extinguishing fire in office 11.' in self.received_messages_content:
+            if not state[{'obj_id': 'brutus', 'location': (2, 21)}]:
+                for info in state.values():
+                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'smog_at_11' in info['obj_id']:
+                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 100, 'action_duration': 0}
+        if self._task == 1 and self.received_messages_content and 'Extinguishing fire in office 06.' in self.received_messages_content and self._resistance < 35:
+            if not state[{'obj_id': 'brutus', 'location': (9, 7)}]:
+                for info in state.values():
+                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'smog_at_06' in info['obj_id']:
+                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 100, 'action_duration': 0}
+        if self._task == 2 and self.received_messages_content and 'Extinguishing fire in office 06.' in self.received_messages_content and self._resistance < 25:
+            if not state[{'obj_id': 'brutus', 'location': (9, 7)}]:
+                for info in state.values():
+                    if 'class_inheritance' in info and 'EnvObject' in info['class_inheritance'] and 'smog_at_06' in info['obj_id']:
+                        return RemoveObject.__name__, {'object_id': info['obj_id'], 'remove_range': 100, 'action_duration': 0}
+
+        
+        if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Extinguishing the fire in office 04' in self.received_messages_content[-1] and self._task == 1:
+            if (23,4) not in self._added:
+                self._added.append((23,4))
+                action_kwargs = add_object([(23,4)], "/images/girder.svg", 1.25, 1, 'iron', False, True)
+                return AddObject.__name__, action_kwargs
+        if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Extinguishing the fire in office 09' in self.received_messages_content[-1] and self._task == 1:
+            if (9,18) not in self._added:
+                self._added.append((9,18))
+                action_kwargs = add_object([(9,18)], "/images/girder.svg", 1.25, 1, 'iron', False, True)
+                return AddObject.__name__, action_kwargs
+        if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Extinguishing the fire in office 05' in self.received_messages_content[-1] and self._task == 1:
+            if (2,6) not in self._added:
+                self._added.append((2,6))
+                action_kwargs = add_object([(2,6)], "/images/girder.svg", 1.25, 1, 'iron', False, True)
+                return AddObject.__name__, action_kwargs
+        if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Extinguishing the fire in office 13' in self.received_messages_content[-1] and self._task == 1:
+            if (16,20) not in self._added:
+                self._added.append((16,20))
+                action_kwargs = add_object([(16,20)], "/images/girder.svg", 1.25, 1, 'iron', False, True)
+                return AddObject.__name__, action_kwargs
+        #if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Extinguishing the fire in office 01' in self.received_messages_content[-1] and self._task == 2 or \
+        #    agent_name == 'fire_fighter_1' and self.received_messages_content and 'Evacuating the victims in office 01 first' in self.received_messages_content[-1] and self._task == 2:
+        #    if (2,4) not in self._added:
+        #        self._added.append((2,4))
+        #        action_kwargs = add_object([(2,4)], "/images/girder.svg", 1.25, 1, 'iron', False, True)
+        #        return AddObject.__name__, action_kwargs
+        if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Extinguishing the fire in office 09' in self.received_messages_content[-1] and self._task == 2:
+            if (9,18) not in self._added:
+                self._added.append((9,18))
+                action_kwargs = add_object([(9,18)], "/images/girder.svg", 1.25, 1, 'iron', False, True)
+                return AddObject.__name__, action_kwargs
+            
+        if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Evacuating the victim in office 04 first' in self.received_messages_content[-1] and self._task == 1:
+            if (23,2) not in self._added:
+                self._added.append((23,2))
+                action_kwargs = add_object([(23,2)], "/images/fire2.svg", 2, 1, 'spread fire', True, True)
+                return AddObject.__name__, action_kwargs
+            return RemoveObject.__name__, {'object_id': 'fire_in_office_04', 'remove_range': 100}
+        if self.received_messages_content and self._task == 1:
+            for msg in self.received_messages_content:
+                if 'Evacuating the victim in office 04 first' in msg and msg not in self._processed_messages:
+                    self._processed_messages.append(msg)
+                    return RemoveObject.__name__, {'object_id': 'fire_04', 'remove_range': 100}
+        if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Evacuating the victims in office 09 first' in self.received_messages_content[-1] and self._task == 1:
+            if (9,16) not in self._added:
+                self._added.append((9,16))
+                action_kwargs = add_object([(9,16)], "/images/fire2.svg", 2, 1, 'spread fire', True, True)
+                return AddObject.__name__, action_kwargs
+            return RemoveObject.__name__, {'object_id': 'fire_in_office_09', 'remove_range': 100}
+        if self.received_messages_content and self._task == 1:
+            for msg in self.received_messages_content:
+                if 'Evacuating the victims in office 09 first' in msg and msg not in self._processed_messages:
+                    self._processed_messages.append(msg)
+                    return RemoveObject.__name__, {'object_id': 'fire_09', 'remove_range': 100}
+        if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Evacuating the victims in office 05 first' in self.received_messages_content[-1] and self._task == 1:
+            if (2,8) not in self._added:
+                self._added.append((2,8))
+                action_kwargs = add_object([(2,8)], "/images/fire2.svg", 2, 1, 'spread fire', True, True)
+                return AddObject.__name__, action_kwargs
+            return RemoveObject.__name__, {'object_id': 'fire_in_office_05', 'remove_range': 100}
+        if self.received_messages_content and self._task == 1:
+            for msg in self.received_messages_content:
+                if 'Evacuating the victims in office 05 first' in msg and msg not in self._processed_messages:
+                    self._processed_messages.append(msg)
+                    return RemoveObject.__name__, {'object_id': 'fire_5', 'remove_range': 100}
+        if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Evacuating the victim in office 13 first' in self.received_messages_content[-1] and self._task == 1:
+            if (16,22) not in self._added:
+                self._added.append((16,22))
+                action_kwargs = add_object([(16,22)], "/images/fire2.svg", 2, 1, 'spread fire', True, True)
+                return AddObject.__name__, action_kwargs
+            return RemoveObject.__name__, {'object_id': 'fire_in_office_13', 'remove_range': 100}
+        if self.received_messages_content and self._task == 1:
+            for msg in self.received_messages_content:
+                if 'Evacuating the victim in office 13 first' in msg and msg not in self._processed_messages:
+                    self._processed_messages.append(msg)
+                    return RemoveObject.__name__, {'object_id': 'fire_13', 'remove_range': 100}
+        #if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Evacuating the victims in office 01 first' in self.received_messages_content[-1] and self._task == 2:
+        #    if (2,2) not in self._added:
+        #        self._added.append((2,2))
+        #        action_kwargs = add_object([(2,2)], "/images/fire2.svg", 2, 1, 'spread fire', True, True)
+        #        return AddObject.__name__, action_kwargs
+        #    return RemoveObject.__name__, {'object_id': 'fire_in_office_01', 'remove_range': 100}
+        #if self.received_messages_content and self._task == 2:
+        #    for msg in self.received_messages_content:
+        #        if 'Evacuating the victims in office 01 first' in msg and msg not in self._processed_messages:
+        #            self._processed_messages.append(msg)
+        #            return RemoveObject.__name__, {'object_id': 'fire_01', 'remove_range': 100}
+        if agent_name == 'fire_fighter_1' and self.received_messages_content and 'Evacuating the victim in office 09 first' in self.received_messages_content[-1] and self._task == 2:
+            if (9,16) not in self._added:
+                self._added.append((9,16))
+                action_kwargs = add_object([(9,16)], "/images/fire2.svg", 2, 1, 'spread fire', True, True)
+                return AddObject.__name__, action_kwargs
+            return RemoveObject.__name__, {'object_id': 'fire_in_office_09', 'remove_range': 100}
+        if self.received_messages_content and self._task == 2:
+            for msg in self.received_messages_content:
+                if 'Evacuating the victim in office 09 first' in msg and msg not in self._processed_messages:
+                    self._processed_messages.append(msg)
+                    return RemoveObject.__name__, {'object_id': 'fire_09', 'remove_range': 100}
+        
+
         if self.received_messages_content and 'Extinguishing' in self.received_messages_content[-1] and self.received_messages_content[-1] not in self._extinguished_fires:
             self._extinguished_fires.append(self.received_messages_content[-1])
-        agent_name = state[self.agent_id]['obj_id']
-
-        if self._no_fires == 8:
-            if len(self._extinguished_fires) / self._no_fires < 0.75 and self._resistance <= 30:
-                self._temperature = '>'
-                self._temperature_cat = 'higher'
-            if len(self._extinguished_fires) / self._no_fires >= 0.75 or self._resistance > 40:
-                self._temperature = '<'
-                self._temperature_cat = 'lower'
-            if self._resistance > 30 and self._resistance <= 40 and len(self._extinguished_fires) / self._no_fires < 0.75 or \
-                len(self._extinguished_fires) / self._no_fires < 0.75 and len(self._extinguished_fires) / self._no_fires >= 0.25 and self._resistance <= 40:
-                self._temperature = '<≈'
-                self._temperature_cat = 'close'
-        if self._no_fires == 10:
-            if len(self._extinguished_fires) / self._no_fires < 0.8 and self._resistance <= 30:
-                self._temperature = '>'
-                self._temperature_cat = 'higher'
-            if len(self._extinguished_fires) / self._no_fires >= 0.8:
-                self._temperature = '<'
-                self._temperature_cat = 'lower'
-            if len(self._extinguished_fires) / self._no_fires < 0.8 and self._resistance > 30 or len(self._extinguished_fires) / self._no_fires >= 0.40:
-                self._temperature = '<≈'
-                self._temperature_cat = 'close'
+        
+        if len(self._extinguished_fires) / self._no_fires != 1 and self._resistance <= 50:
+            self._temperature = '>'
+            self._temperature_cat = 'higher'
+        if len(self._extinguished_fires) / self._no_fires == 1 and self._resistance > 25 and self._resistance <= 50:
+            self._temperature = '>'
+            self._temperature_cat = 'higher'
+        if len(self._extinguished_fires) / self._no_fires != 1 and self._resistance > 50:
+            self._temperature = '<≈'
+            self._temperature_cat = 'close'
+        if len(self._extinguished_fires) / self._no_fires == 1 and self._resistance > 50:
+            self._temperature = '<≈'
+            self._temperature_cat = 'close'
+        if len(self._extinguished_fires) / self._no_fires == 1 and self._resistance <= 25 and self._no_fires == 8:
+            self._temperature = '<≈'
+            self._temperature_cat = 'close'
+        if len(self._extinguished_fires) / self._no_fires > 0.8 and self._resistance <= 25 and self._no_fires == 6:
+            self._temperature = '<≈'
+            self._temperature_cat = 'close'
 
         while True:            
             if Phase.WAIT_FOR_CALL == self._phase:
@@ -129,17 +287,17 @@ class firefighter(custom_agent_brain):
                     and 'AreaTile' in info['class_inheritance']
                     and 'room_name' in info
                     and info['room_name'] == self._area]
-                if self._temperature != '>' or self._temperature == '>' and self._decided == 'robot':
-                    self._room_tiles = room_tiles               
-                    self._navigator.reset_full()
-                    self._navigator.add_waypoints(room_tiles)
-                    self._phase = Phase.FOLLOW_ROOM_SEARCH_PATH
-                else:
-                    self._send_message('<b>ABORTING TASK!</b> The conditions are too dangerous for us to continue searching for the fire source.', agent_name.replace('_', ' ').capitalize())
+                if self._temperature == '>' and len(self._smoke_plums) > 2:
+                    self._send_message('<b>ABORTING TASK!</b> The combination of temperature and amount of smoke is too dangerous for me to continue searching for the fire source in ' + self._area + '.', agent_name.replace('_', ' ').capitalize())
                     self.agent_properties["img_name"] = "/images/human-danger2.gif"
                     self.agent_properties["visualize_size"] = 2.0
                     self._phase = Phase.PLAN_EXIT
                     return Idle.__name__, {'action_duration': 0}
+                if self._temperature == '>' and len(self._smoke_plums) < 3 or self._temperature == '>' and self._decided == 'robot' or self._temperature == '<≈':
+                    self._room_tiles = room_tiles               
+                    self._navigator.reset_full()
+                    self._navigator.add_waypoints(room_tiles)
+                    self._phase = Phase.FOLLOW_ROOM_SEARCH_PATH
 
             if Phase.FOLLOW_ROOM_SEARCH_PATH == self._phase:
                 self._state_tracker.update(state)
@@ -149,13 +307,13 @@ class firefighter(custom_agent_brain):
                         if 'class_inheritance' in info and 'FireObject' in info['class_inheritance'] and 'source' in info['obj_id'] and self._location != 'found':
                             self._send_message('<b>Fire source</b> located in ' + self._area + ' and pinned on the map.', agent_name.replace('_', ' ').capitalize())
                             self._location = 'found'
-                            action_kwargs = add_object([info['location']], "/images/source-final.svg", 2, 1, 'fire source in ' + self._area)
+                            action_kwargs = add_object([info['location']], "/images/source-final.svg", 2, 1, 'fire source in ' + self._area, True, True)
                             self._phase = Phase.FOLLOW_ROOM_SEARCH_PATH
                             return AddObject.__name__, action_kwargs
                         if 'class_inheritance' in info and 'FireObject' in info['class_inheritance'] and 'fire' in info['obj_id'] and self._location != 'found':
                             self._send_message('Fire located in ' + self._area + ' and pinned on the map.', agent_name.replace('_', ' ').capitalize())
                             self._location = 'found'
-                            action_kwargs = add_object([info['location']], "/images/fire2.svg", 2, 1, 'fire in ' + self._area)
+                            action_kwargs = add_object([info['location']], "/images/fire2.svg", 2, 1, 'fire in ' + self._area, True, True)
                             self._phase = Phase.FOLLOW_ROOM_SEARCH_PATH
                             return AddObject.__name__, action_kwargs
                     return action, {}
@@ -196,22 +354,22 @@ class firefighter(custom_agent_brain):
                 self._phase = Phase.TAKE_VICTIM
 
             if Phase.TAKE_VICTIM == self._phase:
-                if self._temperature != '>' or self._temperature == '>' and self._decided == 'robot':
+                if self._temperature == '>' and len(self._smoke_plums) > 2:
+                    for info in state.values():
+                        if 'class_inheritance' in info and 'CollectableBlock' in info['class_inheritance']:
+                            self._goal_victim = info['img_name'][8:-4]
+                    self._send_message('<b>ABORTING TASK!</b> The combination of temperature and amount of smoke is too dangerous for me to continue rescuing ' + self._goal_victim + '.', agent_name.replace('_', ' ').capitalize())
+                    self.agent_properties["img_name"] = "/images/human-danger2.gif"
+                    self.agent_properties["visualize_size"] = 2.0
+                    self._phase = Phase.PLAN_EXIT
+                    return Idle.__name__, {'action_duration': 0}
+                if self._temperature == '>' and len(self._smoke_plums) < 3 or self._temperature == '>' and self._decided == 'robot' or self._temperature == '<≈':
                     self._phase = Phase.PLAN_PATH_TO_DROPPOINT
                     for info in state.values():
                         if 'class_inheritance' in info and 'CollectableBlock' in info['class_inheritance']:
                             self._goal_victim = info['img_name'][8:-4]
                             self._send_message('Transporting ' + self._goal_victim + ' to the safe zone.', agent_name.replace('_', ' ').capitalize())
                             return CarryObject.__name__, {'object_id': info['obj_id'], 'action_duration': 0}
-                else:
-                    for info in state.values():
-                        if 'class_inheritance' in info and 'CollectableBlock' in info['class_inheritance']:
-                            self._goal_victim = info['img_name'][8:-4]
-                    self._send_message('<b>ABORTING TASK!</b> The conditions are too dangerous for me to continue rescuing ' + self._goal_victim + '.', agent_name.replace('_', ' ').capitalize())
-                    self.agent_properties["img_name"] = "/images/human-danger2.gif"
-                    self.agent_properties["visualize_size"] = 2.0
-                    self._phase = Phase.PLAN_EXIT
-                    return Idle.__name__, {'action_duration': 0}
 
             if Phase.PLAN_PATH_TO_DROPPOINT == self._phase:
                 self._navigator.reset_full()

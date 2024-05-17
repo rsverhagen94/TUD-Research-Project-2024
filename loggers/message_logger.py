@@ -12,7 +12,7 @@ class message_logger(GridWorldLogger):
     def __init__(self, save_path="", file_name_prefix="", file_extension=".csv", delimiter=";"):
         super().__init__(save_path=save_path, file_name=file_name_prefix, file_extension=file_extension,
                          delimiter=delimiter, log_strategy=1)
-        self._threshold = None
+        self._threshold = 4.2
 
     def log(self, grid_world: GridWorld, agent_data: dict):
 
@@ -88,7 +88,7 @@ class message_logger(GridWorldLogger):
                         if 'Sending in' in mssg.content and 'Not sending in' not in mssg.content:
                             firefighter_decisions += 1
 
-        log_data['threshold'] = self._threshold
+        log_data['threshold'] = 4.2
         log_data['total_number_messages_human'] = tot_messages_human
         log_data['total_number_messages_robot'] = tot_messages_robot
         log_data['total_allocations_human'] = tot_allocations_human

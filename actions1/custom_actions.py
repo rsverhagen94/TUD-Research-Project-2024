@@ -22,8 +22,8 @@ class AddObject(Action):
                 "location": kwargs['add_objects'][i]['location'],
                 "name": kwargs['add_objects'][i]['name'],
                 "class_callable": EnvObject,
-                "is_traversable": True,
-                "is_movable": False,
+                "is_traversable": kwargs['add_objects'][i]['is_traversable'],
+                "is_movable": kwargs['add_objects'][i]['is_movable'],
                 "visualize_size": kwargs['add_objects'][i]['visualize_size'],
                 "visualize_opacity": kwargs['add_objects'][i]['visualize_opacity'],
                 "img_name": kwargs['add_objects'][i]['img_name']
@@ -470,7 +470,6 @@ class CarryObject(Action):
         #if 'critical' in object_id and 'bot' in agent_id:
             # change our image 
         #    reg_ag.change_property("img_name", "/images/carry-critical-robot.svg")
-
         if 'mild' in object_id and 'brutus' in agent_id and 'elderly_man' in object_id:
             reg_ag.change_property("img_name", "/images/evacuate-granddad-titus2.svg")
         if 'mild' in object_id and 'brutus' in agent_id and 'elderly_woman' in object_id:

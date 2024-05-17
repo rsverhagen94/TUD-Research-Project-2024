@@ -32,8 +32,8 @@ class Phase(enum.Enum):
 
 
 class tutorial_firefighter(custom_agent_brain):
-    def __init__(self, name, condition, resistance, no_fires, victims, task, counterbalance_condition):
-        super().__init__(name, condition, resistance, no_fires, victims, task, counterbalance_condition)
+    def __init__(self, name, condition, resistance, no_fires, victims, task):
+        super().__init__(name, condition, resistance, no_fires, victims, task)
         self._phase = Phase.WAIT_FOR_CALL
         self._resistance = resistance
         self._time_left = resistance
@@ -119,7 +119,7 @@ class tutorial_firefighter(custom_agent_brain):
                     self._navigator.add_waypoints(room_tiles)
                     self._phase = Phase.FOLLOW_ROOM_SEARCH_PATH
                 else:
-                    self._send_message('<b>ABORTING TASK!</b> The conditions are too dangerous for me to continue searching for the fire source in ' + self._area + '.', agent_name.replace('_', ' ').capitalize())
+                    self._send_message('<b>ABORTING TASK!</b> The combination of temperature and amount of smoke is too dangerous for me to continue searching for the fire source in ' + self._area + '.', agent_name.replace('_', ' ').capitalize())
                     self.agent_properties["img_name"] = "/images/human-danger2.gif"
                     self.agent_properties["visualize_size"] = 2.0
                     self._phase = Phase.PLAN_EXIT
@@ -189,7 +189,7 @@ class tutorial_firefighter(custom_agent_brain):
                     for info in state.values():
                         if 'class_inheritance' in info and 'CollectableBlock' in info['class_inheritance']:
                             self._goal_victim = info['img_name'][8:-4]
-                    self._send_message('<b>ABORTING TASK!</b> The conditions are too dangerous for me to continue rescuing ' + self._goal_victim + '.', agent_name.replace('_', ' ').capitalize())
+                    self._send_message('<b>ABORTING TASK!</b> The combination of temperature and amount of smoke is too dangerous for me to continue rescuing ' + self._goal_victim + '.', agent_name.replace('_', ' ').capitalize())
                     self.agent_properties["img_name"] = "/images/human-danger2.gif"
                     self.agent_properties["visualize_size"] = 2.0
                     self._phase = Phase.PLAN_EXIT
