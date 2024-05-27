@@ -72,6 +72,7 @@ class robot(custom_agent_brain):
         self._office_doors = {(2, 3): '01', (9, 3): '02', (16, 3): '03', (23, 3): '04', (2, 7): '05', (9, 7): '06', (16, 7): '07', 
                               (2, 17): '08', (9, 17): '09', (16, 17): '10', (2, 21): '11', (9, 21): '12', (16, 21): '13', (23, 21): '14'}
         self._decided_time = None
+        self._removal_time = None
         self._current_door = None
         self._current_room = None
         self._goal_victim = None
@@ -934,10 +935,10 @@ class robot(custom_agent_brain):
                             self._id = info['obj_id']
                             self._waiting = True
                 # remain idle while waiting
-                if self._decided_time and int(self._second) < self._decided_time + self._removal_time and self._id:                                                       
+                if self._decided_time and self._removal_time and int(self._second) < self._decided_time + self._removal_time and self._id:                                                       
                     return None, {}
                 # remove obstacle after 5 seconds of waiting    
-                if self._decided_time and int(self._second) >= self._decided_time + self._removal_time and self._id and state[{'obj_id': self._id}]:
+                if self._decided_time and self._removal_time and int(self._second) >= self._decided_time + self._removal_time and self._id and state[{'obj_id': self._id}]:
                     return RemoveObject.__name__, {'object_id': self._id, 'remove_range': 5}
                 # if obstacle is no longer there or no obstacle was present at all, enter the room
                 if self._id and not state[{'obj_id': self._id}] or not self._id:
