@@ -489,6 +489,10 @@ class robot(custom_agent_brain):
                     # send correct messages depending on current deployment tactic and explanation condition
                     if self._tactic == 'offensive':
                         self._deploy_time = self._offensive_deployment_time
+                        if self._defensive_search_rounds == 0:
+                            explanation = '.'
+                        if self._defensive_search_rounds > 0:
+                            explanation = ' to extinguish fires that might have flared up again.'
                         if self._condition == 'baseline':
                             self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
                                                 We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
