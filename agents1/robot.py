@@ -72,6 +72,7 @@ class robot(custom_agent_brain):
         self._office_doors = {(2, 3): '01', (9, 3): '02', (16, 3): '03', (23, 3): '04', (2, 7): '05', (9, 7): '06', (16, 7): '07', 
                               (2, 17): '08', (9, 17): '09', (16, 17): '10', (2, 21): '11', (9, 21): '12', (16, 21): '13', (23, 21): '14'}
         self._decided_time = None
+        self._removal_time = None
         self._current_door = None
         self._current_room = None
         self._goal_victim = None
@@ -434,13 +435,46 @@ class robot(custom_agent_brain):
                 # determine the image name of the visual explanation
                 image_name = "custom_gui/static/images/sensitivity_plots/plot_at_time_" + str(self._resistance) + ".svg"
                 # calculate the predicted sensitivity for this situation
-                self._sensitivity = R_to_Py_plot_tactic(self._total_victims_cat, self._location_cat, self._resistance, image_name)
+                sensitivity, baseline, location_sensitivity, resistance_sensitivity, people_sensitivity = R_to_Py_plot_tactic(self._total_victims_cat, self._location_cat, self._resistance, image_name)
+                self._sensitivity = sensitivity
+                print(baseline)
+                print (str(baseline))
                 self._plot_generated = True
 
                 # determine exact image name depending on explanation condition
                 # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
                 if self._condition == 'baseline':
                     image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
+                # elif self._condition == 'textual':
+                a = ['\n \t - The number of victims is <b>' + str(self._total_victims_cat) + '</b>, which <b>',
+                     float(str(people_sensitivity).split()[-1]),
+                     ' the baseline moral sensitivity.']
+                b = ['\n \t - The location of the fire is <b>' + str(self._location_cat) + '</b>, which <b>',
+                     float(str(location_sensitivity).split()[-1]),
+                     ' the baseline moral sensitivity.']
+                c = ['\n \t - The resistance of the building is <b>' + str(self._resistance) + ' minutes</b>, which <b>',
+                     float(str(resistance_sensitivity).split()[-1]),
+                     ' the baseline moral sensitivity.']
+                if a[1] < b[1]:
+                    a, b = b, a
+                if b[1] < c[1]:
+                    b, c = c, b
+                if a[1] < b[1]:
+                    a, b = b, a
+                if a[1] >= 0:
+                    a[1] = 'adds ' + str(a[1]) + '</b> to'
+                else:
+                    a[1] = 'subtracts ' + str(abs(a[1])) + '</b> from'
+                if b[1] >= 0:
+                    b[1] = 'adds ' + str(b[1]) + '</b> to'
+                else:
+                    b[1] = 'subtracts ' + str(abs(b[1])) + '</b> from'
+                if c[1] >= 0:
+                    c[1] = 'adds ' + str(c[1]) + '</b> to'
+                else:
+                    c[1] = 'subtracts ' + str(abs(c[1])) + '</b> from'
+                textual = '\n \t - The baseline moral sensitivity is <b>' + str(baseline).split()[-1] + '</b>.' + a[0] + a[1] + a[2] + b[0] + b[1] + b[2] + c[0] + c[1] + c[2]
+
 
                 # allocate decision making to human because the predicted sensitivity is higher than the allocation threshold
                 if self._sensitivity > 4.1:
@@ -457,9 +491,15 @@ class robot(custom_agent_brain):
                                                 <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
                                                 exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
-                                                + image_name, self._name)
+                                                + image_name + textual, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        elif self._condition == 'textual':
+                            self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                This is how much each feature contributed to the predicted sensitivity: ' + textual, self._name)
+                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand':
                             print('To be implemented by students')
                         
                     if self._tactic == 'defensive':
@@ -470,9 +510,15 @@ class robot(custom_agent_brain):
                                                 <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
                                                 exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
-                                                + image_name, self._name)
+                                                + image_name + textual, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        elif self._condition == 'textual':
+                            self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                This is how much each feature contributed to the predicted sensitivity: ' + textual, self._name)
+                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand':
                             print('To be implemented by students')
 
                     # allocate decision making to human and keep track of time to ensure enough reading time of explanations    
@@ -488,15 +534,25 @@ class robot(custom_agent_brain):
                     # send correct messages depending on current deployment tactic and explanation condition
                     if self._tactic == 'offensive':
                         self._deploy_time = self._offensive_deployment_time
+                        if self._defensive_search_rounds == 0:
+                            explanation = '.'
+                        if self._defensive_search_rounds > 0:
+                            explanation = ' to extinguish fires that might have flared up again.'
                         if self._condition == 'baseline':
                             self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
-                                                We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                We should decide whether to continue with this deployment, or switch to a defensive deployment' + ' \
                                                 <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
                                                 is below my allocation threshold. However, you can also reallocate the decision to yourself. \
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
-                                                + image_name, self._name)
+                                                + image_name + textual, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        elif self._condition == 'textual':
+                            self._send_message('Our offensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                This is how much each feature contributed to the predicted sensitivity: ' + textual, self._name)
+                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand':
                             print('To be implemented by students')
 
                     if self._tactic == 'defensive':
@@ -507,9 +563,15 @@ class robot(custom_agent_brain):
                                                 <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
                                                 is below my allocation threshold. However, you can also reallocate the decision to yourself. \
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
-                                                + image_name, self._name)
+                                                + image_name + textual, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        elif self._condition == 'textual':
+                            self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                This is how much each feature contributed to the predicted sensitivity:' + textual, self._name)
+                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand':
                             print('To be implemented by students')
 
                     # allocate decision making to robot and keep track of time to ensure enough reading time of explanations 
@@ -695,13 +757,49 @@ class robot(custom_agent_brain):
                 # determine the correct image name to show in the visual explanation
                 image_name = "custom_gui/static/images/sensitivity_plots/plot_at_time_" + str(self._resistance) + ".svg"
                 # calculate the predicted moral sensitivity for this situation
-                self._sensitivity = R_to_Py_plot_locate(self._total_victims_cat, self._resistance, self._temperature_cat, image_name)
+                sensitivity, baseline, temperature_sensitivity, resistance_sensitivity, people_sensitivity = R_to_Py_plot_locate(
+                    self._total_victims_cat, self._resistance, self._temperature_cat, image_name)
+                self._sensitivity = sensitivity
                 self._plot_generated = True
 
                 # determine the exact image name to show depending on explanation condition
                 # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
                 if self._condition == 'baseline':
                     image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
+
+                # elif self._condition == 'textual':
+                if self._temperature_cat == 'close' or self._temperature_cat == 'lower':
+                    temperature = 'lower'
+                if self._temperature_cat == 'higher':
+                    temperature = 'higher'
+                a = ['\n \t - The number of victims is <b>' + str(self._total_victims_cat) + '</b>, which <b>',
+                     float(str(people_sensitivity).split()[-1]),
+                     ' the baseline moral sensitivity.']
+                b = ['\n \t - The temperature is <b>' + str(temperature) + '</b> than the threshold, which <b>',
+                     float(str(temperature_sensitivity).split()[-1]),
+                     ' the baseline moral sensitivity.']
+                c = ['\n \t - The resistance of the building is <b>' + str(self._resistance) + ' minutes</b>, which <b>',
+                     float(str(resistance_sensitivity).split()[-1]),
+                     ' the baseline moral sensitivity.']
+                if a[1] < b[1]:
+                    a, b = b, a
+                if b[1] < c[1]:
+                    b, c = c, b
+                if a[1] < b[1]:
+                    a, b = b, a
+                if a[1] >= 0:
+                    a[1] = 'adds ' + str(a[1]) + '</b> to'
+                else:
+                    a[1] = 'subtracts ' + str(abs(a[1])) + '</b> from'
+                if b[1] >= 0:
+                    b[1] = 'adds ' + str(b[1]) + '</b> to'
+                else:
+                    b[1] = 'subtracts ' + str(abs(b[1])) + '</b> from'
+                if c[1] >= 0:
+                    c[1] = 'adds ' + str(c[1]) + '</b> to'
+                else:
+                    c[1] = 'subtracts ' + str(abs(c[1])) + '</b> from'
+                textual = '\n \t - The baseline moral sensitivity is <b>' + str(baseline).split()[-1] + '</b>.' + a[0] + a[1] + a[2] + b[0] + b[1] + b[2] + c[0] + c[1] + c[2]
 
                 # allocate decision making to human if predicted sensivitiy is higher than the allocation threshold
                 if self._sensitivity > 4.1:
@@ -710,10 +808,15 @@ class robot(custom_agent_brain):
                                             or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
                                             (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
                                             This is how much each feature contributed to the predicted sensitivity: \n \n ' \
-                                            + image_name, self._name)
+                                            + image_name + textual, self._name)
                     # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+                    elif self._condition == 'textual':
+                        self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                            or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                            (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                            This is how much each feature contributed to the predicted sensitivity:' + textual, self._name)
+                    if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand':
+                        print('To be implemented by students')
 
                     # allocate decision making to human and keep track of time to ensure enough reading time for the explanations
                     self._decide = 'human'
@@ -730,10 +833,15 @@ class robot(custom_agent_brain):
                                             or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
                                             (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
                                             This is how much each feature contributed to the predicted sensitivity: \n \n ' \
-                                            + image_name, self._name)
+                                            + image_name + textual + str(self._distance), self._name)
                     # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+                    elif self._condition == 'textual':
+                        self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                            or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                            (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                            This is how much each feature contributed to the predicted sensitivity:' + textual, self._name)
+                    if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand':
+                        print('To be implemented by students')
 
                     # allocate decision making to robot and keep track of time to ensure enough reading time for visual explanations
                     self._decide = self._name
@@ -1017,13 +1125,45 @@ class robot(custom_agent_brain):
                                     if self._temperature_cat == 'higher':
                                         temperature = 'higher'
                                     # calculate the predicted moral sensitivity for this situation
-                                    self._sensitivity = R_to_Py_plot_rescue(self._resistance, temperature, self._distance, image_name)
+                                    sensitivity, baseline, temperature_sensitivity, resistance_sensitivity, distance_sensitivity = R_to_Py_plot_rescue(
+                                        self._resistance, self._temperature, self._distance, image_name)
+                                    self._sensitivity = sensitivity
                                     self._plot_generated = True
 
                                     # determine the exact visual explanation to show based on victim and explanation condition
                                     # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
                                     if self._condition == 'baseline':
                                         image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
+
+                                    # elif self._condition == 'textual':
+                                    a = ['\n \t - The distance is between the victim and the fire source is <b>' + str(self._distance) + '</b>, which <b>',
+                                         float(str(distance_sensitivity).split()[-1]),
+                                         ' the baseline moral sensitivity.']
+                                    b = ['\n \t - The temperature is <b>' + str(temperature) + '</b> than the threshold, which <b>',
+                                         float(str(temperature_sensitivity).split()[-1]),
+                                         ' the baseline moral sensitivity.']
+                                    c = ['\n \t - The resistance of the building is <b>' + str(self._resistance) + ' minutes</b>, which <b>',
+                                         float(str(resistance_sensitivity).split()[-1]),
+                                         ' the baseline moral sensitivity.']
+                                    if a[1] < b[1]:
+                                        a, b = b, a
+                                    if b[1] < c[1]:
+                                        b, c = c, b
+                                    if a[1] < b[1]:
+                                        a, b = b, a
+                                    if a[1] >= 0:
+                                        a[1] = 'adds ' + str(a[1]) + '</b> to'
+                                    else:
+                                        a[1] = 'subtracts ' + str(abs(a[1])) + '</b> from'
+                                    if b[1] >= 0:
+                                        b[1] = 'adds ' + str(b[1]) + '</b> to'
+                                    else:
+                                        b[1] = 'subtracts ' + str(abs(b[1])) + '</b> from'
+                                    if c[1] >= 0:
+                                        c[1] = 'adds ' + str(c[1]) + '</b> to'
+                                    else:
+                                        c[1] = 'subtracts ' + str(abs(c[1])) + '</b> from'
+                                    textual = '\n \t - The baseline moral sensitivity is <b>' + str(baseline).split()[-1] + '</b>.' + a[0] + a[1] + a[2] + b[0] + b[1] + b[2] + c[0] + c[1] + c[2]
 
                                     # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
                                     if self._sensitivity > 4.1:
@@ -1033,9 +1173,15 @@ class robot(custom_agent_brain):
                                                                 <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
                                                                 exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
                                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
-                                                                + image_name, self._name)
+                                                                + image_name + textual, self._name)
                                         # ADD YOUR EXPLANATIONS HERE
-                                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                        elif self._condition == 'textual':
+                                            self._send_message('I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                                exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                                This is how much each feature contributed to the predicted sensitivity:' + textual, self._name)
+                                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand':
                                             print('To be implemented by students')
 
                                         # allocate to human and keep track of time to ensure enough reading time of the explanation
@@ -1052,9 +1198,15 @@ class robot(custom_agent_brain):
                                                                 <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
                                                                 is below my allocation threshold. However, you can also reallocate the decision to yourself. \
                                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
-                                                                + image_name, self._name)
+                                                                + image_name + textual, self._name)
                                         # ADD YOUR EXPLANATIONS HERE
-                                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                        elif self._condition == 'textual':
+                                            self._send_message('I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                                exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                                This is how much each feature contributed to the predicted sensitivity:' + textual, self._name)
+                                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand':
                                             print('To be implemented by students')
 
                                         # allocate to robot and keep track of time to ensure enough reading time for the visual explanations
@@ -1077,13 +1229,44 @@ class robot(custom_agent_brain):
                         if 'mild' in self._recent_victim and not self._plot_generated:
                             image_name = "custom_gui/static/images/sensitivity_plots/plot_for_vic_" + vic.replace(' ', '_') + ".svg"
                             # calculate the predicted moral sensitivity for this situation
-                            self._sensitivity = R_to_Py_plot_priority(len(self._room_victims), self._smoke, self._location_cat, image_name)
-                            self._plot_generated = True
+                            sensitivity, baseline, location_sensitivity, smoke_sensitivity, people_sensitivity = R_to_Py_plot_priority(
+                                len(self._room_victims), self._smoke, self._location_cat, image_name)
+                            self._sensitivity = sensitivity
 
                             # determine the exact visual explanation to show based on explanation condition and victim type
                             # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
                             if self._condition == 'baseline':
                                 image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
+
+                            # elif self._condition == 'textual':
+                            a = ['\n \t - The location of the fire is <b>' + str(self._location_cat) + '</b>, which <b>',
+                                 float(str(location_sensitivity).split()[-1]),
+                                 ' the baseline moral sensitivity.']
+                            b = ['\n \t - The speed at which the smoke is spreading is <b>' + str(self._smoke) + '</b>, which <b>',
+                                 float(str(smoke_sensitivity).split()[-1]),
+                                 ' the baseline moral sensitivity.']
+                            c = ['\n \t - The number of victims found is <b>' + str(len(self._room_victims)) + '</b>, which <b>',
+                                 float(str(people_sensitivity).split()[-1]),
+                                 ' the baseline moral sensitivity.']
+                            if a[1] < b[1]:
+                                a, b = b, a
+                            if b[1] < c[1]:
+                                b, c = c, b
+                            if a[1] < b[1]:
+                                a, b = b, a
+                            if a[1] >= 0:
+                                a[1] = 'adds ' + str(a[1]) + '</b> to'
+                            else:
+                                a[1] = 'subtracts ' + str(abs(a[1])) + '</b> from'
+                            if b[1] >= 0:
+                                b[1] = 'adds ' + str(b[1]) + '</b> to'
+                            else:
+                                b[1] = 'subtracts ' + str(abs(b[1])) + '</b> from'
+                            if c[1] >= 0:
+                                c[1] = 'adds ' + str(c[1]) + '</b> to'
+                            else:
+                                c[1] = 'subtracts ' + str(abs(c[1])) + '</b> from'
+                            textual = '\n \t - The baseline moral sensitivity is <b>' + str(baseline).split()[-1] + '</b>.' + a[0] + a[1] + a[2] + b[0] + b[1] + b[2] + c[0] + c[1] + c[2]
                             
                             # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
                             if self._sensitivity > 4.1:
@@ -1093,9 +1276,15 @@ class robot(custom_agent_brain):
                                                         <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
                                                         exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
                                                         This is how much each feature contributed to the predicted sensitivity: \n \n ' \
-                                                        + image_name, self._name)
+                                                        + image_name + textual, self._name)
                                 # ADD YOUR EXPLANATIONS HERE
-                                if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                elif self._condition == 'textual':
+                                    self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                        We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                        <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                        exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                        This is how much each feature contributed to the predicted sensitivity:' + textual, self._name)
+                                if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand':
                                     print('To be implemented by students')
 
                                 # allocate to human and keep track of time to ensure enough reading time for the visual explanations
@@ -1111,9 +1300,15 @@ class robot(custom_agent_brain):
                                                         <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
                                                         is below my allocation threshold. However, you can also reallocate the decision to yourself. \
                                                         This is how much each feature contributed to the predicted sensitivity: \n \n ' \
-                                                        + image_name, self._name)
+                                                        + image_name + textual, self._name)
                                 # ADD YOUR EXPLANATIONS HERE
-                                if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                elif self._condition == 'textual':
+                                    self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                        We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                        <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                        exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                        This is how much each feature contributed to the predicted sensitivity:' + textual, self._name)
+                                if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand':
                                     print('To be implemented by students')
 
                                 # allocate to robot and keep track of time to ensure enough reading time for the visual explanation
