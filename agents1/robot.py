@@ -97,6 +97,8 @@ class robot(custom_agent_brain):
         self._offensive_search_rounds = 0
         self._defensive_search_rounds = 0
         self._interventions = 1
+        self._on_demand_image_name = None
+        self._extra_info_count = 0
 
     def initialize(self):
         # initialize state tracker and navigator
@@ -442,6 +444,8 @@ class robot(custom_agent_brain):
                 # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
                 if self._condition == 'baseline':
                     image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
+                if self._condition == 'on-demand':
+                    image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
 
                 # allocate decision making to human because the predicted sensitivity is higher than the allocation threshold
                 if self._sensitivity > 4.1:
@@ -460,7 +464,14 @@ class robot(custom_agent_brain):
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        if self._condition == 'on-demand':
+                            self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me.\
+                                                If you wish to receive additional information, press the "Extra info" button".\n \n ' \
+                                               , self._name)
+                            self._on_demand_image_name = image_name
                             print('To be implemented by students')
                         
                     if self._tactic == 'defensive':
@@ -473,7 +484,14 @@ class robot(custom_agent_brain):
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        if self._condition == 'on-demand':
+                            self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me.\
+                                                If you wish to receive additional information, press the "Extra info" button".\n \n ' \
+                                                , self._name)
+                            self._on_demand_image_name = image_name
                             print('To be implemented by students')
 
                     # allocate decision making to human and keep track of time to ensure enough reading time of explanations    
@@ -501,7 +519,14 @@ class robot(custom_agent_brain):
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        if self._condition == 'on-demand':
+                            self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                 We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                 <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                 is below my allocation threshold. However, you can also reallocate the decision to yourself.\
+                                                  If you wish to receive additional information, press the "Extra info" button".\n \n ' \
+                                               , self._name)
+                            self._on_demand_image_name = image_name
                             print('To be implemented by students')
 
                     if self._tactic == 'defensive':
@@ -514,7 +539,14 @@ class robot(custom_agent_brain):
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        if self._condition == 'on-demand':
+                            self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                is below my allocation threshold. However, you can also reallocate the decision to yourself.\
+                                                If you wish to receive additional information, press the "Extra info" button".\n \n ' \
+                                               , self._name)
+                            self._on_demand_image_name = image_name
                             print('To be implemented by students')
 
                     # allocate decision making to robot and keep track of time to ensure enough reading time of explanations 
@@ -527,6 +559,11 @@ class robot(custom_agent_brain):
 
             # decision making phase for the situation continue or switch deployment tactic
             if Phase.TACTIC == self._phase:
+                if self._condition == 'on-demand':
+                    if self.received_messages_content and self.received_messages_content[-1] == 'Extra info' and self._on_demand_image_name is not None:
+                        self._send_message('This is how much each feature contributed to the predicted sensitivity: \n \n '
+                                           + self._on_demand_image_name, self._name)
+                        self._extra_info_count = self._extra_info_count + 1 # count how many times the button for on-demand explanation has been pressed
                 if self._decide == 'human' and self._tactic == 'offensive':
                     self._waiting = True
                     # reallocate decision making to the robot if the human decides so
@@ -705,7 +742,7 @@ class robot(custom_agent_brain):
 
                 # determine the exact image name to show depending on explanation condition
                 # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
-                if self._condition == 'baseline':
+                if self._condition == 'baseline' or self._condition == 'on-demand':
                     image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
 
                 # allocate decision making to human if predicted sensivitiy is higher than the allocation threshold
@@ -717,7 +754,13 @@ class robot(custom_agent_brain):
                                             This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                             + image_name, self._name)
                     # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        if self._condition == 'on-demand':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                 or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                                 (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. \
+                                                 However, you can also reallocate the decision to me. If you wish to receive additional information, press the "Extra info" button".\n \n ' \
+                                               , self._name)
+                            self._on_demand_image_name = image_name
                             print('To be implemented by students')
 
                     # allocate decision making to human and keep track of time to ensure enough reading time for the explanations
@@ -737,7 +780,13 @@ class robot(custom_agent_brain):
                                             This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                             + image_name, self._name)
                     # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                        if self._condition == 'on-demand':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                 or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                 (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself.\
+                                                 If you wish to receive additional information, press the "Extra info" button". \n \n ' \
+                                               , self._name)
+                            self._on_demand_image_name = image_name
                             print('To be implemented by students')
 
                     # allocate decision making to robot and keep track of time to ensure enough reading time for visual explanations
@@ -1027,7 +1076,7 @@ class robot(custom_agent_brain):
 
                                     # determine the exact visual explanation to show based on victim and explanation condition
                                     # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
-                                    if self._condition == 'baseline':
+                                    if self._condition == 'baseline' or self._condition == 'on-demand':
                                         image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
 
                                     # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
@@ -1040,7 +1089,15 @@ class robot(custom_agent_brain):
                                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                                 + image_name, self._name)
                                         # ADD YOUR EXPLANATIONS HERE
-                                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                        if self._condition == 'on-demand':
+                                            self._send_message(
+                                                'I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                 We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                 <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str( self._sensitivity) + '</b>) \
+                                                                 exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me.\
+                                                                  If you wish to receive additional information, press the "Extra info" button".\n \n ' \
+                                                                , self._name)
+                                            self._on_demand_image_name = image_name
                                             print('To be implemented by students')
 
                                         # allocate to human and keep track of time to ensure enough reading time of the explanation
@@ -1059,7 +1116,14 @@ class robot(custom_agent_brain):
                                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                                 + image_name, self._name)
                                         # ADD YOUR EXPLANATIONS HERE
-                                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                        if self._condition == 'on-demand':
+                                            self._send_message('I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                                 is below my allocation threshold. However, you can also reallocate the decision to yourself.\
+                                                                  If you wish to receive additional information, press the "Extra info" button".\n \n ' \
+                                                                , self._name)
+                                            self._on_demand_image_name = image_name
                                             print('To be implemented by students')
 
                                         # allocate to robot and keep track of time to ensure enough reading time for the visual explanations
@@ -1087,7 +1151,7 @@ class robot(custom_agent_brain):
 
                             # determine the exact visual explanation to show based on explanation condition and victim type
                             # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
-                            if self._condition == 'baseline':
+                            if self._condition == 'baseline' or self._condition == 'on-demand':
                                 image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
                             
                             # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
@@ -1100,7 +1164,14 @@ class robot(custom_agent_brain):
                                                         This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                         + image_name, self._name)
                                 # ADD YOUR EXPLANATIONS HERE
-                                if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                if self._condition == 'on-demand':
+                                    self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' +self._door['room_name'].split()[-1] + '. \
+                                                        We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                        <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                        exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me.\
+                                                        If you wish to receive additional information, press the "Extra info" button".\n \n ' \
+                                                        , self._name)
+                                    self._on_demand_image_name = image_name
                                     print('To be implemented by students')
 
                                 # allocate to human and keep track of time to ensure enough reading time for the visual explanations
@@ -1118,7 +1189,14 @@ class robot(custom_agent_brain):
                                                         This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                         + image_name, self._name)
                                 # ADD YOUR EXPLANATIONS HERE
-                                if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
+                                if self._condition == 'on-demand':
+                                    self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                        We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                        <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                        is below my allocation threshold. However, you can also reallocate the decision to yourself.\
+                                                        If you wish to receive additional information, press the "Extra info" button".\n \n ' \
+                                                        , self._name)
+                                    self._on_demand_image_name = image_name
                                     print('To be implemented by students')
 
                                 # allocate to robot and keep track of time to ensure enough reading time for the visual explanation
@@ -1141,6 +1219,11 @@ class robot(custom_agent_brain):
             # phase to deal with decision making in situation 'send in fire fighters to rescue critically injured victim or not'
             if Phase.RESCUE == self._phase:
                 # decision allocated to human
+                if self._condition == 'on-demand':
+                    if self.received_messages_content and self.received_messages_content[-1] == 'Extra info' and self._on_demand_image_name is not None:
+                        self._send_message('This is how much each feature contributed to the predicted sensitivity: \n \n '
+                                           + self._on_demand_image_name, self._name)
+                        self._extra_info_count = self._extra_info_count + 1 # count how many times the button for on-demand explanation has been pressed
                 if self._decide == 'human':
                     # reallocate decision making to robot if human decides so
                     if self.received_messages_content and self.received_messages_content[-1] == 'Allocate to robot' and int(self._second) < self._time + 25 \
@@ -1289,6 +1372,11 @@ class robot(custom_agent_brain):
 
             # decision making phase for the situation 'evacuate mildly injured victims first or extinguish fire first'
             if Phase.PRIORITY == self._phase:
+                if self._condition == 'on-demand':
+                    if self.received_messages_content and self.received_messages_content[-1] == 'Extra info' and self._on_demand_image_name is not None:
+                        self._send_message('This is how much each feature contributed to the predicted sensitivity: \n \n '
+                                           + self._on_demand_image_name, self._name)
+                        self._extra_info_count = self._extra_info_count + 1 # count how many times the button for on-demand explanation has been pressed
                 self._evacuating = True
                 # decision allocated to human
                 if self._decide == 'human':
