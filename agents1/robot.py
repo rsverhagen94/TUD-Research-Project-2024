@@ -440,7 +440,8 @@ class robot(custom_agent_brain):
 
                 # determine exact image name depending on explanation condition
                 # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
-                if self._condition == 'baseline':
+                if self._condition == 'baseline' or self._condition == 'contrastive':
+                    image_before_change = image_name
                     image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
 
                 # allocate decision making to human because the predicted sensitivity is higher than the allocation threshold
@@ -459,9 +460,47 @@ class robot(custom_agent_brain):
                                                 exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
-                        # ADD YOUR EXPLANATIONS HERE
+                        # ADD YOUR EXPLANATIONS -HERE
                         if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+                            self._send_message("offensive > 4.1 tactic", self._name)
+                            text = 'Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to a defensive deployment. \
+                                                Please make this decision because the predicted moral sensitivity of this situation (<b>' + str(self._sensitivity) + '</b>) \
+                                                is above my allocation threshold. This is how much each feature contributed to the predicted sensitivity: \n \n ' \
+                                                + image_name
+                            (people, location, new_resistance, current_sensitivity) = self._find_limit_moral_threshold_tactic(self._total_victims_cat, self._location_cat, self._resistance, image_before_change, "lower")
+
+                            if current_sensitivity != None:
+                                text += "\nGiven these change(s) I would allocate the decision to myself:\n"
+                                if self._total_victims_cat != people:
+                                    text += "If the locations of the victims was <b>" + people + "</b> instead of <b>" + self._total_victims_cat + "</b>.\n"
+                                if self._smoke != smoke:
+                                    text += "If the smoke was spread was <b>" + smoke + "</b> instead of <b>" + self._smoke + "</b>.\n"
+                                if self._resistance != new_resistance:
+                                    text += "If the time left was <b>" + new_resistance + "</b> instead of <b>" + self._resistance + "</b>.\n"
+                                
+                                
+                            
+                            self._send_message(text, self._name)
+                            
+                            # if current_sensitivity == None:
+                            #     self._send_message("No alternative situation found")
+                            # else:
+                            #     table = "Here is a possible alternative which the robot would decide\n \
+                            #     Original sensitivity (<b>" + str(self._sensitivity) + "</b>): \n \
+                            #     Total victims: <b>" + str(self._total_victims_cat) + str(self._smoke) + "</b>,   Victim location: <b>" + str(self._location_cat) + "</b>,   Time left: <b>" + str(self._resistance) + "</b>\n \n\
+                            #     Alternative sensitivity (<b>" + str(current_sensitivity) + "</b>): \n \
+                            #     Total victims: <b>" + str(people) + "</b>,   Victim location: <b>" + str(location) + "</b>,   Time left: <b>" + str(new_resistance) + "</b>"
+                                
+                            #     if new_resistance < 5:
+                            #         table = table + "In this alternative I am switching to a defensive deployment after the offensive deployment of " + str(self._offensive_deployment_time) + " minutes \
+                            #                             because the resistance to collapse is less than 5 minutes, making the chance of saving people and the building too low."
+                            #     else:
+                            #         table = table + "In this alternative I am continuing with the offensive deployment that has been going on for " + str(self._offensive_deployment_time) + " minutes \
+                            #                             because there is still chance to save people and the building."
+                                
+                            #     self._send_message(table, self._name)
+                                    
                         
                     if self._tactic == 'defensive':
                         self._deploy_time = self._defensive_deployment_time
@@ -472,10 +511,47 @@ class robot(custom_agent_brain):
                                                 exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
-                        # ADD YOUR EXPLANATIONS HERE
+                        # ADD YOUR EXPLANATIONS -HERE
                         if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+                            self._send_message("offensive > 4.1 tactic", self._name)
+                            text = 'Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                This is how much each feature contributed to the predicted sensitivity: \n \n ' \
+                                                + image_name
+                            (people, location, new_resistance, current_sensitivity) = self._find_limit_moral_threshold_tactic(self._total_victims_cat, self._location_cat, self._resistance, image_before_change, "lower")
+                            
+                            if current_sensitivity != None:
+                                text += "\nGiven these change(s) I would allocate the decision to myself:\n"
+                                if self._total_victims_cat != people:
+                                    text += "If the locations of the victims was <b>" + people + "</b> instead of <b>" + self._total_victims_cat + "</b>.\n"
+                                if self._smoke != smoke:
+                                    text += "If the smoke was spread was <b>" + smoke + "</b> instead of <b>" + self._smoke + "</b>.\n"
+                                if self._resistance != new_resistance:
+                                    text += "If the time left was <b>" + new_resistance + "</b> instead of <b>" + self._resistance + "</b>.\n"
+                                
+                            self._send_message(text, self._name)
+                            # if current_sensitivity == None:
+                            #     self._send_message("No alternative situation found")
+                            # else:
+                            #     table = "Here is a possible alternative which the robot would decide\n \
+                            #     Original sensitivity (<b>" + str(self._sensitivity) + "</b>): \n \
+                            #     Total victims: <b>" + str(self._total_victims_cat) + str(self._smoke) + "</b>,   Victim location: <b>" + str(self._location_cat) + "</b>,   Time left: <b>" + str(self._resistance) + "</b>\n \n\
+                            #     Alternative sensitivity (<b>" + str(current_sensitivity) + "</b>): \n \
+                            #     Total victims: <b>" + str(people) + "</b>,   Victim location: <b>" + str(location) + "</b>,   Time left: <b>" + str(new_resistance) + "</b>"
+                                
+                                
+                                # if new_resistance < 5:
+                                #     table = table + "In this alternative I am continuing with the defensive deployment that has been going on for " + str(self._defensive_deployment_time) + " minutes \
+                                #                         because the resistance to collapse is less than 5 minutes, making the chance of saving people and the building too low."
+                                    
+                                # else:
+                                #     table = table + "In this alternative I am switching to an offensive deployment after the defensive deployment of " + str(self._defensive_deployment_time) + " minutes \
+                                #                         because there is still chance to save people and the building."
+                                # self._send_message(table, self._name)
 
+                    R_to_Py_plot_tactic(self._total_victims_cat, self._location_cat, self._resistance, image_before_change)
                     # allocate decision making to human and keep track of time to ensure enough reading time of explanations    
                     self._decide = 'human'
                     self._plot_times.append(self._time_left - self._resistance)
@@ -498,7 +574,39 @@ class robot(custom_agent_brain):
                                                 + image_name, self._name)
                         # ADD YOUR EXPLANATIONS HERE
                         if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+                            self._send_message("offensive <= 4.1 tactic", self._name)
+                            text = 'Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                This is how much each feature contributed to the predicted sensitivity: \n \n ' \
+                                                + image_name
+                            
+                            (people, location, new_resistance, current_sensitivity) = self._find_limit_moral_threshold_tactic(self._total_victims_cat, self._location_cat, self._resistance, image_before_change, "upper")       
+                            if current_sensitivity != None:
+                                text += "\nGiven these change(s) I would allocate the decision to you:\n"
+                                if self._total_victims_cat != people:
+                                    text += "If the locations of the victims was <b>" + people + "</b> instead of <b>" + self._total_victims_cat + "</b>.\n"
+                                if self._smoke != smoke:
+                                    text += "If the smoke was spread was <b>" + smoke + "</b> instead of <b>" + self._smoke + "</b>.\n"
+                                if self._resistance != new_resistance:
+                                    text += "If the time left was <b>" + new_resistance + "</b> instead of <b>" + self._resistance + "</b>.\n"
+                                
+                            self._send_message(text, self._name)
+                            # if current_sensitivity == None:
+                            #     self._send_message("No alternative situation found")
+                            # else:
+                            #     table = "Here is a possible alternative which the robot would decide\n \
+                            #     Original sensitivity (<b>" + str(self._sensitivity) + "</b>): \n \
+                            #     Total victims: <b>" + str(self._total_victims_cat) + str(self._smoke) + "</b>,   Victim location: <b>" + str(self._location_cat) + "</b>,   Time left: <b>" + str(self._resistance) + "</b>\n \n\
+                            #     Alternative sensitivity (<b>" + str(current_sensitivity) + "</b>): \n \
+                            #     Total victims: <b>" + str(people) + "</b>,   Victim location: <b>" + str(location) + "</b>,   Time left: <b>" + str(new_resistance) + "</b>"
+                                
+                            #     table = table + '\n \nIn this alternative the circumstances are too sensitive and I would allocate the decision making to you.'
+                                
+                                
+                            #     self._send_message(table, self._name)
+                                
 
                     if self._tactic == 'defensive':
                         self._deploy_time = self._defensive_deployment_time
@@ -511,8 +619,41 @@ class robot(custom_agent_brain):
                                                 + image_name, self._name)
                         # ADD YOUR EXPLANATIONS HERE
                         if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+                            self._send_message("defensive <= 4.1 tactic", self._name)
+                            text = 'Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                This is how much each feature contributed to the predicted sensitivity: \n \n ' \
+                                                + image_name
+                            (people, location, new_resistance, current_sensitivity) = self._find_limit_moral_threshold_tactic(self._total_victims_cat, self._location_cat, self._resistance, image_before_change, "upper")
+                            
+                            if current_sensitivity != None:
+                                text += "\nGiven these change(s) I would allocate the decision to you:\n"
+                                if self._total_victims_cat != people:
+                                    text += "If the locations of the victims was <b>" + people + "</b> instead of <b>" + self._total_victims_cat + "</b>.\n"
+                                if self._smoke != smoke:
+                                    text += "If the smoke was spread was <b>" + smoke + "</b> instead of <b>" + self._smoke + "</b>.\n"
+                                if self._resistance != new_resistance:
+                                    text += "If the time left was <b>" + new_resistance + "</b> instead of <b>" + self._resistance + "</b>.\n"
+                            
+                            self._send_message(text, self._name)        
+                            # if current_sensitivity == None:
+                            #     self._send_message("No alternative situation found")
+                            # else:
+                            #     table = "Here is a possible alternative which the robot would decide\n \
+                            #     Original sensitivity (<b>" + str(self._sensitivity) + "</b>): \n \
+                            #     Total victims: <b>" + str(self._total_victims_cat) + str(self._smoke) + "</b>,   Victim location: <b>" + str(self._location_cat) + "</b>,   Time left: <b>" + str(self._resistance) + "</b>\n \n\
+                            #     Alternative sensitivity (<b>" + str(current_sensitivity) + "</b>): \n \
+                            #     Total victims: <b>" + str(people) + "</b>,   Victim location: <b>" + str(location) + "</b>,   Time left: <b>" + str(new_resistance) + "</b>"
+                                
+                            #     table = table + '\n \nIn this alternative the circumstances are too sensitive and I would allocate the decision making to you.'
+                                
+                                
+                                # self._send_message(table, self._name)
+                            
 
+                    R_to_Py_plot_tactic(self._total_victims_cat, self._location_cat, self._resistance, image_before_change)
                     # allocate decision making to robot and keep track of time to ensure enough reading time of explanations 
                     self._decide = self._name
                     self._plot_times.append(self._time_left - self._resistance)
@@ -701,7 +842,8 @@ class robot(custom_agent_brain):
 
                 # determine the exact image name to show depending on explanation condition
                 # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
-                if self._condition == 'baseline':
+                if self._condition == 'baseline' or self._condition == 'contrastive':
+                    image_before_change = image_name
                     image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
 
                 # allocate decision making to human if predicted sensivitiy is higher than the allocation threshold
@@ -714,7 +856,25 @@ class robot(custom_agent_brain):
                                             + image_name, self._name)
                     # ADD YOUR EXPLANATIONS HERE
                         if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+                            self._send_message("> 4.1, locate", self._name)
+                            text = 'The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                            or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                            (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                            This is how much each feature contributed to the predicted sensitivity: \n \n ' \
+                                            + image_name
+                            (people, new_resistance, new_temperature) = self._find_limit_moral_threshold_locate(self._total_victims_cat, self._resistance, self._temperature_cat, image_before_change, "lower")
+                            
+                            if current_sensitivity != None:
+                                text += "\nGiven these change(s) I would allocate the decision to myself:\n"
+                                if self._total_victims_cat != people:
+                                    text += "If the locations of the victims was <b>" + people + "</b> instead of <b>" + self._total_victims_cat + "</b>.\n"
+                                if self._resistance != new_resistance:
+                                    text += "If the time left was <b>" + new_resistance + "</b> instead of <b>" + self._resistance + "</b>.\n"
+                                if self._temperature_cat != new_temperature:
+                                    text += "If the fire was <b>" + new_temperature + "</b> instead of <b>" + self._temperature_cat + "</b>.\n"
+                            
+                            self._send_message(text, self._name)  
+
 
                     # allocate decision making to human and keep track of time to ensure enough reading time for the explanations
                     self._decide = 'human'
@@ -734,7 +894,24 @@ class robot(custom_agent_brain):
                                             + image_name, self._name)
                     # ADD YOUR EXPLANATIONS HERE
                         if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+                            self._send_message("<= 4.1, locate", self._name)
+                            text = 'The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                            or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                            (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                            This is how much each feature contributed to the predicted sensitivity: \n \n ' \
+                                            + image_name
+                            (people, new_resistance, new_temperature) = self._find_limit_moral_threshold_locate(self._total_victims_cat, self._resistance, self._temperature_cat, image_before_change, "uppper")
+                            
+                            if current_sensitivity != None:
+                                text += "\nGiven these change(s) I would allocate the decision to you:\n"
+                                if self._total_victims_cat != people:
+                                    text += "If the locations of the victims was <b>" + people + "</b> instead of <b>" + self._total_victims_cat + "</b>.\n"
+                                if self._resistance != new_resistance:
+                                    text += "If the time left was <b>" + new_resistance + "</b> instead of <b>" + self._resistance + "</b>.\n"
+                                if self._temperature_cat != new_temperature:
+                                    text += "If the fire was <b>" + new_temperature + "</b> instead of <b>" + self._temperature_cat + "</b>.\n"
+                            
+                            self._send_message(text, self._name) 
 
                     # allocate decision making to robot and keep track of time to ensure enough reading time for visual explanations
                     self._decide = self._name
@@ -1023,7 +1200,8 @@ class robot(custom_agent_brain):
 
                                     # determine the exact visual explanation to show based on victim and explanation condition
                                     # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
-                                    if self._condition == 'baseline':
+                                    if self._condition == 'baseline' or self._condition == 'contrastive':
+                                        image_before_change = image_name
                                         image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
 
                                     # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
@@ -1037,8 +1215,26 @@ class robot(custom_agent_brain):
                                                                 + image_name, self._name)
                                         # ADD YOUR EXPLANATIONS HERE
                                         if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                                            print('To be implemented by students')
+                                            self._send_message("> 4.1, rescue", self._name)
+                                            text = 'I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                                exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                                This is how much each feature contributed to the predicted sensitivity: \n \n ' \
+                                                                + image_name
+                                            (new_resistance, new_temperature, current_dist, current_sensitivity) = self._find_limit_moral_threshold_rescue(self._resistance, temperature, self._distance, image_name, 'lower')
 
+                                            if current_sensitivity != None:
+                                                text += "\nGiven these change(s) I would allocate the decision to myself:\n"
+                                                if self._resistance != new_resistance:
+                                                    text += "If the time left was <b>" + new_resistance + "</b> instead of <b>" + self._resistance + "</b>.\n"
+                                                if self._temperature_cat != new_temperature:
+                                                    text += "If the fire was <b>" + new_temperature + "</b> instead of <b>" + self._temperature_cat + "</b>.\n"
+                                                if self._distance != current_dist:
+                                                    text += "If the distance between victim and fire was <b>" + current_dist + "</b> instead of <b>" + self._distance + "</b>.\n"
+                                                
+                                            
+                                            self._send_message(text, self._name) 
                                         # allocate to human and keep track of time to ensure enough reading time of the explanation
                                         self._decide = 'human'
                                         self._time = int(self._second)
@@ -1047,6 +1243,7 @@ class robot(custom_agent_brain):
                                         return Idle.__name__, {'action_duration': 0}
                                     # allocate to robot if the predicted moral sensitivity is lower than or equal to the allocation threshold
                                     if self._sensitivity <= 4.1:
+                                        self._send_message("<= 4.1, rescue", self._name)
                                         if self._condition == 'baseline':
                                             self._send_message('I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
                                                                 We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
@@ -1056,7 +1253,23 @@ class robot(custom_agent_brain):
                                                                 + image_name, self._name)
                                         # ADD YOUR EXPLANATIONS HERE
                                         if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                                            print('To be implemented by students')
+                                            text = 'I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                                is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                                This is how much each feature contributed to the predicted sensitivity: \n \n ' \
+                                                                + image_name
+                                            (new_resistance, new_temperature, current_dist, current_sensitivity) = self._find_limit_moral_threshold_rescue(self._resistance, temperature, self._distance, image_name, 'upper')
+
+                                            if current_sensitivity != None:
+                                                text += "\nGiven these change(s) I would allocate the decision to you:\n"
+                                                if self._resistance != new_resistance:
+                                                    text += "If the time left was <b>" + new_resistance + "</b> instead of <b>" + self._resistance + "</b>.\n"
+                                                if self._temperature_cat != new_temperature:
+                                                    text += "If the fire was <b>" + new_temperature + "</b> instead of <b>" + self._temperature_cat + "</b>.\n"
+                                                if self._distance != current_dist:
+                                                    text += "If the distance between victim and fire was <b>" + current_dist + "</b> instead of <b>" + self._distance + "</b>.\n"
+                                                
 
                                         # allocate to robot and keep track of time to ensure enough reading time for the visual explanations
                                         self._decide = self._name
@@ -1077,13 +1290,15 @@ class robot(custom_agent_brain):
                         # determine which visual explanation to show for the situation evacuate mildly injured victims immediately or extinguish first
                         if 'mild' in self._recent_victim and not self._plot_generated:
                             image_name = "custom_gui/static/images/sensitivity_plots/plot_for_vic_" + vic.replace(' ', '_') + ".svg"
+                            
                             # calculate the predicted moral sensitivity for this situation
                             self._sensitivity = R_to_Py_plot_priority(len(self._room_victims), self._smoke, self._location_cat, image_name)
                             self._plot_generated = True
 
                             # determine the exact visual explanation to show based on explanation condition and victim type
                             # YOU MIGHT NEED TO ADD/REMOVE SOMETHING HERE FOR YOUR SPECIFIC CONDITION
-                            if self._condition == 'baseline':
+                            if self._condition == 'baseline' or self._condition == 'contrastive':
+                                image_before_change = image_name
                                 image_name = "<img src='/static/images" + image_name.split('/static/images')[-1] + "' />"
                             
                             # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
@@ -1097,8 +1312,43 @@ class robot(custom_agent_brain):
                                                         + image_name, self._name)
                                 # ADD YOUR EXPLANATIONS HERE
                                 if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                                    print('To be implemented by students')
+                                    self._send_message("> 4.1, priority", self._name)
+                                    text = 'I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                        We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                        <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                        exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                        This is how much each feature contributed to the predicted sensitivity: \n \n ' \
+                                                        + image_name
+                                    
+                                    (people, smoke, location, current_sensitivity) = self._find_limit_moral_threshold_priority(len(self._room_victims), self._smoke, self._location_cat, image_before_change, 'lower')
+                                    
+                                    if current_sensitivity != None:
+                                        text += "\nGiven these change(s) I would allocate the decision to myself:\n"
+                                        if self._smoke != smoke:
+                                            text += "If the smoke was spread was <b>" + smoke + "</b> instead of <b>" + self._smoke + "</b>.\n"
+                                        if self._location_cat != location:
+                                            text += "If the location was <b>" + location + "</b> instead of <b>" + self._location_cat + "</b>.\n"
+                                    
+                                    self._send_message(text, self._name)
+                                    
+                                        # table = "Here is a possible alternative which the robot would decide\n \
+                                        # Original sensitivity (<b>" + str(self._sensitivity) + "</b>): \n \
+                                        # Room victims: <b>" + str(len(self._room_victims)) + "</b>,   Smoke spread: <b>" + str(self._smoke) + "</b>,   Victim location: <b>" + str(self._location_cat) + "</b>\n \n\
+                                        # Alternative sensitivity (<b>" + str(current_sensitivity) + "</b>): \n \
+                                        # Room victims: <b>" + str(people) + "</b>,   Smoke spread: <b>" + str(smoke) + "</b>,   Victim location: <b>" + str(location) + "</b>"
 
+                                        
+                                        # if location == 'unknown' and smoke == 'fast':
+                                        #     table = table + '\n \nIn this alternative I would evacuate the ' + self._vic_string + ' in office ' + self._door['room_name'].split()[-1] + ' first \
+                                        #                         because the fire source is not located and the smoke is spreading fast.'
+                                        # # otherwise, extinguish the fire first
+                                        # else:
+                                        #     table = table + '\n \nIn this alternative I would extinguish the fire in office ' + self._door['room_name'].split()[-1] + ' first because these are the general guidelines.'
+
+                                        
+                                        # self._send_message(table, self._name)
+                                        
+                                R_to_Py_plot_priority(len(self._room_victims), self._smoke, self._location_cat, image_before_change)
                                 # allocate to human and keep track of time to ensure enough reading time for the visual explanations
                                 self._decide = 'human'
                                 self._time = int(self._second)
@@ -1115,8 +1365,38 @@ class robot(custom_agent_brain):
                                                         + image_name, self._name)
                                 # ADD YOUR EXPLANATIONS HERE
                                 if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                                    print('To be implemented by students')
+                                    self._send_message("<= 4.1, locate", self._name)
+                                    text = 'I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                        We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                        <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                        is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                        This is how much each feature contributed to the predicted sensitivity: \n \n ' \
+                                                        + image_name
+                                    (people, smoke, location, current_sensitivity) = self._find_limit_moral_threshold_priority(len(self._room_victims), self._smoke, self._location_cat, image_before_change, 'upper')
+                                    
+                                    if current_sensitivity != None:
+                                        text += "\nGiven these change(s) I would allocate the decision to you:\n"
+                                        if self._smoke != smoke:
+                                            text += "If the smoke spread was <b>" + smoke + "</b> instead of <b>" + self._smoke + "</b>.\n"
+                                        if self._location_cat != location:
+                                            text += "If the location was <b>" + location + "</b> instead of <b>" + self._location_cat + "</b>.\n"
+                                    
+                                    self._send_message(text, self._name)
+                                    # if current_sensitivity == None:
+                                    #     self._send_message("No alternative situation found")
+                                    # else:
+                                    #     table = "Here is a possible alternative which the robot would decide\n \
+                                    #     Original sensitivity (<b>" + str(self._sensitivity) + "</b>): \n \
+                                    #     Room victims: <b>" + str(len(self._room_victims)) + "</b>,   Smoke spread: <b>" + str(self._smoke) + "</b>,   Victim location: <b>" + str(self._location_cat) + "</b>\n \n\
+                                    #     Alternative sensitivity (<b>" + str(current_sensitivity) + "</b>): \n \
+                                    #     Room victims: <b>" + str(people) + "</b>,   Smoke spread: <b>" + str(smoke) + "</b>,   Victim location: <b>" + str(location) + "</b>"
+                                        
+                                    #     table = table + '\n \nIn this alternative the circumstances are too sensitive and I would allocate the decision making to you.'
+                                        
+                                        
+                                    #     self._send_message(table, self._name)
 
+                                R_to_Py_plot_priority(len(self._room_victims), self._smoke, self._location_cat, image_before_change)
                                 # allocate to robot and keep track of time to ensure enough reading time for the visual explanation
                                 self._decide = self._name
                                 self._plot_times.append(self._time_left - self._resistance)
@@ -1505,3 +1785,151 @@ class robot(custom_agent_brain):
             if place['drop_zone_nr'] == 0:
                 zones.append(place)
         return zones
+    
+     
+    def _lower_temperature(self, new_temperature):
+        if new_temperature == "higher":
+            return "close"
+        else:
+            return "lower"
+    
+    def _upper_temperature(self, new_temperature):
+        if new_temperature == "lower":
+            return "close"
+        else:
+            return "higher"
+    
+    def _lower_distance(self):
+        return "small"
+    
+    def _upper_distance(self):
+        return "large"
+    
+    def _lower_resistance(self, new_resistance):
+        return max(0, new_resistance - 1)
+    
+    def _upper_resistance(self, new_resistance):
+        return min(self._time_left, new_resistance + 1)
+    
+    def _lower_smoke(self, new_smoke):
+        if new_smoke == "fast":
+            return "normal"
+        else:
+            return "slow"
+    
+    def _upper_smoke(self, new_smoke):
+        if new_smoke == "slow":
+            return "normal"
+        else:
+            return "fast"
+
+    
+    def _lower_location(self):
+        return "known"
+    
+    def _upper_location(self):
+        return "unknown"
+    
+    def _find_limit_moral_threshold_rescue(self, resistance, new_temperature, new_distance, img, limit):
+        queue = [(resistance, new_temperature, new_distance)]
+        
+        while(len(queue) > 0):
+            (current_res, current_temp, current_dist) = queue.pop(0)
+            
+            current_sensitivity =  R_to_Py_plot_rescue(current_res, current_temp, current_dist, img)
+            if limit == 'lower':
+                if current_sensitivity <= 4.1:
+                    return (current_res, current_temp, current_dist, current_sensitivity)
+                if current_res != 0:
+                    queue.append((self._lower_resistance(current_res), current_temp, current_dist))
+                queue.append((current_res, self._lower_temperature(current_temp), current_dist))
+                queue.append((current_res, current_temp, self._lower_distance()))
+            else:
+                if current_sensitivity > 4.1:
+                    return (current_res, current_temp, current_dist, current_sensitivity)
+                if current_res != self._time_left:
+                    queue.append((self._upper_resistance(current_res), current_temp, current_dist))
+                queue.append((current_res, self._upper_temperature(current_temp), current_dist))
+                queue.append((current_res, current_temp, self._upper_distance()))
+        return None
+    
+    def _find_limit_moral_threshold_locate(self, people, new_resistance, new_temperature, img, limit):
+        queue = [(people, new_resistance, new_temperature)]
+        
+        while(len(queue) > 0):
+            (location, current_resis, current_temp) = queue.pop(0)
+            
+            current_sensitivity =  R_to_Py_plot_locate(location, current_resis, current_temp, img)
+            if limit == 'lower':
+                if current_sensitivity <= 4.1:
+                    return (location, current_resis, current_temp, current_sensitivity)
+                
+                if location != "known":
+                    queue.append((self._lower_location(location), new_resistance, new_temperature))
+                if new_resistance != 0:
+                    queue.append((location, self._lower_resistance(current_resis), current_temp))
+                queue.append((location, current_resis, self._lower_temperature(current_temp)))
+            else:
+                if current_sensitivity > 4.1:
+                    return (location, current_resis, current_temp, current_sensitivity)
+                
+                if location != "unknown":
+                    queue.append((self._upper_location(location), new_resistance, new_temperature))
+                if new_resistance != self._time_left:
+                    queue.append((location, self._upper_resistance(current_resis), current_temp))
+                queue.append((location, current_resis, self._upper_temperature(current_temp)))
+        
+        return (None, None, None, None)
+
+    def _find_limit_moral_threshold_priority(self, people, smoke, location, img, limit):
+        queue = [(people, smoke, location)]
+        
+        while(len(queue) > 0):
+            (people, smoke, location) = queue.pop(0)
+            current_sensitivity =  R_to_Py_plot_priority(people, smoke, location, img)
+            if limit == 'lower':
+                print('not yet')
+                if current_sensitivity <= 4.1:
+                    return (people, smoke, location, current_sensitivity)
+                
+                if smoke != "slow":
+                    queue.append((people, self._lower_smoke(smoke), location))
+                if location != "known":
+                    queue.append((people, smoke, self._lower_location()))
+            else:
+                print('should come here first')
+                if current_sensitivity > 4.1:
+                    return (people, smoke, location, current_sensitivity)
+                
+                if smoke != "fast":
+                    queue.append((people, self._upper_smoke(smoke), location))
+                if location != "unknown":
+                    queue.append((people, smoke, self._upper_location()))
+        
+        return (None, None, None, None)
+    
+    def _find_limit_moral_threshold_tactic(self, people, location, new_resistance, img, limit):
+        queue = [(people, location, new_resistance)]
+        
+        while(len(queue) > 0):
+            (people, location, new_resistance) = queue.pop(0)
+            
+            current_sensitivity =  R_to_Py_plot_tactic(people, location, new_resistance, img)
+            if limit == 'lower':
+                if current_sensitivity <= 4.1:
+                    return (people, location, new_resistance, current_sensitivity)
+                
+                if location != "known":
+                    queue.append((people, self._lower_location(), new_resistance))
+                if new_resistance != 0:
+                    queue.append((people, location, self._lower_resistance(new_resistance)))
+            else:
+                if current_sensitivity > 4.1:
+                    return (people, location, new_resistance, current_sensitivity)
+                
+                if location != "unknown":
+                    queue.append((people, self._upper_location(), new_resistance))
+                if new_resistance != self._time_left:
+                    queue.append((people, location, self._upper_resistance(new_resistance)))
+    
+        return (None, None, None, None)
