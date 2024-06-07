@@ -4,6 +4,7 @@ import csv
 import glob
 import pathlib
 from custom_gui import visualization_server
+from custom_gui_demand import visualization_server_demand
 from worlds1.world_builder import create_builder
 from utils1.util_functions import load_R_to_Py
 from pathlib import Path
@@ -17,8 +18,7 @@ if __name__ == "__main__":
         media_folder = pathlib.Path().resolve()
         print("Starting custom visualizer")
         vis_thread = visualization_server.run_matrx_visualizer(verbose = False, media_folder = media_folder)
-        #for environment in ['trial', 'experiment']:
-        for environment in ['experiment']:
+        for environment in ['trial', 'experiment']:
             if environment == 'trial':
                 builder = create_builder(id = 'na', exp_version = 'trial', name = 'Brutus', condition = 'tutorial', task = 'na')
                 builder.startup(media_folder = media_folder)
@@ -101,9 +101,8 @@ if __name__ == "__main__":
         if condition == 'on-demand':
             media_folder = pathlib.Path().resolve()
             print("Starting custom visualizer")
-            vis_thread = visualization_server.run_matrx_visualizer(verbose=False, media_folder=media_folder)
-            # for environment in ['trial', 'experiment']: //remove the automatically launched tutorial at the start of the game
-            for environment in ['experiment']:
+            vis_thread = visualization_server_demand.run_matrx_visualizer(verbose=False, media_folder=media_folder)
+            for environment in ['trial', 'experiment']:
                 if environment == 'trial':
                     builder = create_builder(id='na', exp_version='trial', name='Brutus', condition='tutorial',
                                              task='na')
