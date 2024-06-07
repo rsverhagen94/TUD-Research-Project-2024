@@ -30,6 +30,7 @@ class message_logger(GridWorldLogger):
             'disagreement_rate': 0,
             'sensitivity': '',
             'decision': '',
+            'extra_info_count': 0
         }
 
         gwmm = grid_world.message_manager
@@ -41,6 +42,7 @@ class message_logger(GridWorldLogger):
         tot_allocations_human = 0
         tot_allocations_robot = 0
         tot_interventions = 0
+        extra_info_count = 0
         sensitivity = ''
         decision = ''
         processed_messages = []
@@ -88,6 +90,9 @@ class message_logger(GridWorldLogger):
                         if 'Sending in' in mssg.content and 'Not sending in' not in mssg.content:
                             firefighter_decisions += 1
 
+                        if 'This is how much each feature contributed to the predicted sensitivity' in mssg.content:
+                            extra_info_count += 1
+
         log_data['threshold'] = 4.2
         log_data['total_number_messages_human'] = tot_messages_human
         log_data['total_number_messages_robot'] = tot_messages_robot
@@ -97,6 +102,7 @@ class message_logger(GridWorldLogger):
         log_data['firefighter_decisions'] = firefighter_decisions
         log_data['sensitivity'] = sensitivity
         log_data['decision'] = decision
+        log_data['extra_info_count'] = extra_info_count
 
         if firefighter_decisions > 0:
             log_data['firefighter_danger_rate'] = firefighter_danger / firefighter_decisions
