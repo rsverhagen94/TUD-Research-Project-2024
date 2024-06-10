@@ -196,6 +196,9 @@ if __name__ == "__main__":
         exit()
     print("DONE!")
     print("Shutting down custom visualizer")
-    r = requests.get("http://localhost:" + str(visualization_server.port) + "/shutdown_visualizer")
+    if condition == 'baseline':
+        r = requests.get("http://localhost:" + str(visualization_server.port) + "/shutdown_visualizer")
+    else:
+        r = requests.get("http://localhost:" + str(visualization_server_demand.port) + "/shutdown_visualizer")
     vis_thread.join()
     builder.stop()
