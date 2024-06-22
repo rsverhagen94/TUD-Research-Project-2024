@@ -1,1 +1,633 @@
 id,explanation,decision_cat,sensitivity
+25;baseline;no intervention;4.2
+
+25;baseline;no intervention;3.9
+
+25;baseline;no intervention;4.5
+
+25;baseline;no intervention;5.7
+
+25;baseline;no intervention;5.2
+
+25;baseline;no intervention;2.8
+
+25;baseline;no intervention;5.1
+
+25;baseline;no intervention;1.5
+
+25;baseline;no intervention;2.4
+
+25;baseline;no intervention;5.1
+
+25;baseline;no intervention;4.8
+
+25;baseline;no intervention;3.3
+
+25;baseline;no intervention;3.7
+
+26;baseline;no intervention;4.2
+
+26;baseline;no intervention;3.9
+
+26;baseline;no intervention;4.5
+
+26;baseline;no intervention;5.7
+
+26;baseline;no intervention;2.8
+
+26;baseline;no intervention;5.2
+
+26;baseline;no intervention;0.3
+
+26;baseline;no intervention;0.6
+
+26;baseline;no intervention;5.1
+
+26;baseline;no intervention;2.4
+
+26;baseline;no intervention;5.1
+
+26;baseline;no intervention;4.3
+
+26;baseline;no intervention;3.4
+
+27;baseline;no intervention;4.2
+
+27;baseline;no intervention;3.9
+
+27;baseline;no intervention;4.5
+
+27;baseline;no intervention;4.4
+
+27;baseline;no intervention;5.2
+
+27;baseline;no intervention;5.2
+
+27;baseline;no intervention;2.8
+
+27;baseline;no intervention;5.1
+
+27;baseline;no intervention;1.3
+
+27;baseline;no intervention;2.4
+
+27;baseline;no intervention;5.1
+
+27;baseline;no intervention;4.6
+
+27;baseline;no intervention;5.0
+
+29;contrastive;no intervention;4.2
+
+29;contrastive;no intervention;3.9
+
+29;contrastive;no intervention;4.5
+
+29;contrastive;no intervention;5.7
+
+29;contrastive;no intervention;2.8
+
+29;contrastive;no intervention;5.2
+
+29;contrastive;no intervention;5.1
+
+29;contrastive;no intervention;1.6
+
+29;contrastive;no intervention;2.4
+
+29;contrastive;no intervention;5.1
+
+29;contrastive;allocate to robot;5.0
+
+29;contrastive;no intervention;3.5
+
+30;contrastive;no intervention;4.2
+
+30;contrastive;no intervention;3.9
+
+30;contrastive;no intervention;4.5
+
+30;contrastive;no intervention;5.7
+
+30;contrastive;no intervention;5.2
+
+30;contrastive;no intervention;0.5
+
+30;contrastive;no intervention;0.9
+
+30;contrastive;no intervention;5.1
+
+30;contrastive;no intervention;2.4
+
+30;contrastive;no intervention;5.1
+
+30;contrastive;no intervention;2.8
+
+30;contrastive;no intervention;3.4
+
+28;baseline;no intervention;4.2
+
+28;baseline;allocate to self;3.9
+
+28;baseline;no intervention;4.5
+
+28;baseline;no intervention;4.5
+
+28;baseline;no intervention;5.7
+
+28;baseline;no intervention;5.2
+
+28;baseline;no intervention;2.8
+
+28;baseline;no intervention;5.1
+
+28;baseline;no intervention;1.4
+
+28;baseline;no intervention;1.8
+
+28;baseline;no intervention;5.1
+
+28;baseline;no intervention;4.2
+
+28;baseline;no intervention;4.8
+
+28;baseline;no intervention;2.4
+
+31;contrastive;no intervention;4.2
+
+31;contrastive;no intervention;3.9
+
+31;contrastive;no intervention;4.5
+
+31;contrastive;no intervention;5.7
+
+31;contrastive;no intervention;2.8
+
+31;contrastive;no intervention;5.2
+
+31;contrastive;no intervention;0.5
+
+31;contrastive;no intervention;0.8
+
+31;contrastive;no intervention;5.1
+
+31;contrastive;no intervention;2.4
+
+31;contrastive;no intervention;5.1
+
+31;contrastive;no intervention;5.0
+
+32;contrastive;no intervention;4.2
+
+32;contrastive;no intervention;3.9
+
+32;contrastive;no intervention;4.5
+
+32;contrastive;no intervention;5.7
+
+32;contrastive;no intervention;2.8
+
+32;contrastive;no intervention;5.2
+
+32;contrastive;no intervention;0.5
+
+32;contrastive;no intervention;0.9
+
+32;contrastive;no intervention;5.1
+
+32;contrastive;no intervention;2.4
+
+32;contrastive;no intervention;5.1
+
+32;contrastive;no intervention;4.9
+
+32;contrastive;no intervention;4.2
+
+y;baseline;no intervention;4.2
+
+y;contrastive;no intervention;4.2
+
+y;baseline;no intervention;4.2
+
+y;baseline;no intervention;4.2
+
+33;contrastive;no intervention;4.2
+
+33;contrastive;no intervention;3.9
+
+33;contrastive;no intervention;4.5
+
+33;contrastive;no intervention;4.4
+
+33;contrastive;no intervention;5.2
+
+33;contrastive;no intervention;5.2
+
+33;contrastive;no intervention;0.6
+
+33;contrastive;no intervention;2.4
+
+33;contrastive;no intervention;5.1
+
+33;contrastive;no intervention;5.1
+
+33;contrastive;no intervention;4.4
+
+33;contrastive;no intervention;4.7
+
+33;contrastive;no intervention;2.8
+
+34;contrastive;no intervention;4.2
+
+34;contrastive;no intervention;3.9
+
+34;contrastive;no intervention;4.5
+
+34;contrastive;no intervention;4.4
+
+34;contrastive;no intervention;5.2
+
+34;contrastive;no intervention;2.8
+
+34;contrastive;no intervention;5.2
+
+34;contrastive;no intervention;5.1
+
+34;contrastive;no intervention;1.2
+
+34;contrastive;no intervention;2.4
+
+34;contrastive;no intervention;5.1
+
+34;contrastive;no intervention;4.6
+
+34;contrastive;no intervention;4.9
+
+35;contrastive;no intervention;4.2
+
+35;contrastive;no intervention;3.9
+
+35;contrastive;no intervention;4.5
+
+35;contrastive;no intervention;4.4
+
+35;contrastive;no intervention;5.2
+
+35;contrastive;no intervention;2.8
+
+35;contrastive;no intervention;-0.1
+
+35;contrastive;no intervention;5.2
+
+35;contrastive;no intervention;5.1
+
+35;contrastive;no intervention;1.3
+
+35;contrastive;no intervention;1.6
+
+35;contrastive;no intervention;5.1
+
+35;contrastive;no intervention;2.4
+
+36;contrastive;no intervention;4.2
+
+36;contrastive;no intervention;3.9
+
+36;contrastive;no intervention;4.5
+
+36;contrastive;no intervention;4.4
+
+36;contrastive;no intervention;5.2
+
+36;contrastive;no intervention;2.8
+
+36;contrastive;no intervention;5.2
+
+36;contrastive;no intervention;0.3
+
+36;contrastive;no intervention;2.4
+
+36;contrastive;no intervention;5.1
+
+36;contrastive;allocate to self;1.8
+
+36;contrastive;no intervention;5.1
+
+36;contrastive;no intervention;4.3
+
+37;contrastive;no intervention;4.2
+
+37;contrastive;no intervention;3.9
+
+37;contrastive;no intervention;4.5
+
+37;contrastive;no intervention;4.5
+
+37;contrastive;no intervention;5.7
+
+37;contrastive;no intervention;5.2
+
+37;contrastive;no intervention;0.6
+
+37;contrastive;no intervention;5.1
+
+37;contrastive;no intervention;2.4
+
+37;contrastive;no intervention;5.1
+
+37;contrastive;no intervention;4.2
+
+37;contrastive;no intervention;4.6
+
+37;contrastive;no intervention;2.8
+
+38;contrastive;no intervention;4.2
+
+38;contrastive;no intervention;3.9
+
+38;contrastive;no intervention;4.5
+
+38;contrastive;no intervention;5.7
+
+38;contrastive;no intervention;-0.0
+
+38;contrastive;no intervention;5.2
+
+38;contrastive;no intervention;0.5
+
+38;contrastive;no intervention;2.4
+
+38;contrastive;no intervention;5.1
+
+38;contrastive;no intervention;5.1
+
+38;contrastive;no intervention;2.8
+
+38;contrastive;no intervention;4.9
+
+39;contrastive;no intervention;4.2
+
+39;contrastive;no intervention;3.9
+
+39;contrastive;no intervention;4.5
+
+39;contrastive;no intervention;4.5
+
+39;contrastive;no intervention;5.7
+
+39;contrastive;no intervention;2.8
+
+39;contrastive;no intervention;5.2
+
+39;contrastive;no intervention;5.1
+
+39;contrastive;no intervention;1.4
+
+39;contrastive;no intervention;2.4
+
+39;contrastive;no intervention;5.1
+
+39;contrastive;no intervention;4.7
+
+39;contrastive;no intervention;5.1
+
+40;contrastive;no intervention;4.2
+
+40;contrastive;no intervention;3.9
+
+40;contrastive;no intervention;4.5
+
+40;contrastive;no intervention;4.4
+
+40;contrastive;no intervention;5.2
+
+40;contrastive;no intervention;2.8
+
+40;contrastive;no intervention;-0.1
+
+40;contrastive;no intervention;5.2
+
+40;contrastive;no intervention;5.1
+
+40;contrastive;no intervention;1.6
+
+40;contrastive;no intervention;1.9
+
+40;contrastive;no intervention;5.1
+
+40;contrastive;no intervention;2.4
+
+40;contrastive;no intervention;4.0
+
+41;contrastive;no intervention;4.2
+
+41;contrastive;no intervention;3.9
+
+41;contrastive;no intervention;4.5
+
+41;contrastive;no intervention;4.4
+
+41;contrastive;allocate to robot;5.7
+
+41;contrastive;no intervention;2.8
+
+41;contrastive;allocate to robot;5.2
+
+41;contrastive;no intervention;0.4
+
+41;contrastive;no intervention;2.4
+
+41;contrastive;no intervention;5.1
+
+41;contrastive;no intervention;5.1
+
+41;contrastive;no intervention;4.8
+
+41;contrastive;no intervention;3.3
+
+42;contrastive;no intervention;4.2
+
+42;contrastive;no intervention;3.9
+
+42;contrastive;no intervention;4.5
+
+42;contrastive;no intervention;4.5
+
+42;contrastive;no intervention;5.6
+
+42;contrastive;no intervention;2.8
+
+42;contrastive;no intervention;5.1
+
+42;contrastive;no intervention;5.1
+
+42;contrastive;no intervention;4.3
+
+42;contrastive;no intervention;2.4
+
+42;contrastive;no intervention;3.8
+
+42;contrastive;no intervention;4.1
+
+42;contrastive;no intervention;4.2
+
+42;contrastive;no intervention;3.9
+
+42;contrastive;no intervention;4.5
+
+42;contrastive;no intervention;4.4
+
+42;contrastive;no intervention;5.7
+
+42;contrastive;no intervention;5.2
+
+42;contrastive;no intervention;5.1
+
+42;contrastive;no intervention;2.8
+
+42;contrastive;no intervention;5.1
+
+42;contrastive;no intervention;4.1
+
+42;contrastive;no intervention;2.4
+
+42;contrastive;no intervention;3.4
+
+42;contrastive;no intervention;3.8
+
+42;contrastive;no intervention;4.2
+
+44;contrastive;no intervention;4.2
+
+44;contrastive;no intervention;3.9
+
+44;contrastive;no intervention;4.5
+
+44;contrastive;no intervention;4.4
+
+44;contrastive;no intervention;5.2
+
+44;contrastive;no intervention;2.8
+
+44;contrastive;no intervention;5.2
+
+44;contrastive;no intervention;0.4
+
+44;contrastive;no intervention;2.4
+
+44;contrastive;no intervention;5.1
+
+44;contrastive;no intervention;5.1
+
+44;contrastive;no intervention;4.6
+
+44;contrastive;no intervention;4.9
+
+45;contrastive;no intervention;4.2
+
+45;contrastive;no intervention;3.9
+
+45;contrastive;no intervention;4.5
+
+45;contrastive;no intervention;4.4
+
+45;contrastive;no intervention;5.7
+
+45;contrastive;no intervention;2.8
+
+45;contrastive;no intervention;5.2
+
+45;contrastive;no intervention;0.9
+
+45;contrastive;no intervention;5.1
+
+45;contrastive;no intervention;5.1
+
+45;contrastive;no intervention;4.1
+
+45;contrastive;no intervention;4.4
+
+45;contrastive;no intervention;2.4
+
+45;contrastive;no intervention;3.9
+
+46;contrastive;no intervention;4.2
+
+46;contrastive;no intervention;3.9
+
+46;contrastive;no intervention;4.5
+
+46;contrastive;no intervention;4.4
+
+46;contrastive;no intervention;2.8
+
+46;contrastive;no intervention;5.2
+
+46;contrastive;no intervention;5.2
+
+46;contrastive;no intervention;0.6
+
+46;contrastive;no intervention;2.4
+
+46;contrastive;no intervention;5.1
+
+46;contrastive;no intervention;5.1
+
+46;contrastive;no intervention;4.5
+
+46;contrastive;no intervention;4.8
+
+47;contrastive;no intervention;4.2
+
+47;contrastive;no intervention;3.9
+
+47;contrastive;no intervention;4.5
+
+47;contrastive;no intervention;4.4
+
+47;contrastive;no intervention;5.2
+
+47;contrastive;no intervention;2.8
+
+47;contrastive;no intervention;5.2
+
+47;contrastive;no intervention;5.1
+
+47;contrastive;no intervention;1.2
+
+47;contrastive;no intervention;2.4
+
+47;contrastive;no intervention;5.1
+
+47;contrastive;no intervention;4.5
+
+47;contrastive;no intervention;4.9
+
+48;contrastive;no intervention;4.2
+
+48;contrastive;no intervention;3.9
+
+48;contrastive;no intervention;4.5
+
+48;contrastive;no intervention;4.4
+
+48;contrastive;no intervention;5.7
+
+48;contrastive;no intervention;2.8
+
+48;contrastive;no intervention;5.2
+
+48;contrastive;no intervention;5.1
+
+48;contrastive;no intervention;1.6
+
+48;contrastive;no intervention;2.4
+
+48;contrastive;no intervention;5.1
+
+48;contrastive;no intervention;5.0
+
+48;contrastive;no intervention;5.4
+
+48;contrastive;no intervention;5.6
+
