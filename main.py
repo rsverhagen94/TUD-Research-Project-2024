@@ -13,7 +13,7 @@ if __name__ == "__main__":
     id = input()
     print("\nEnter one of the conditions 'baseline', 'adaptive', 'contrastive', 'global', 'on-demand', or 'textual':")
     condition = input()
-    if condition == 'baseline':
+    if condition == 'baseline' or condition == 'contrastive':
         media_folder = pathlib.Path().resolve()
         print("Starting custom visualizer")
         vis_thread = visualization_server.run_matrx_visualizer(verbose = False, media_folder = media_folder)
