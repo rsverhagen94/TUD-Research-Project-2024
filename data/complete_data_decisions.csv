@@ -1,1 +1,373 @@
 id,explanation,decision_cat,sensitivity
+daf;baseline;no intervention;4.2
+daf;baseline;no intervention;3.9
+daf;baseline;no intervention;4.5
+daf;baseline;no intervention;4.2
+maria;baseline;no intervention;4.2
+maria;baseline;no intervention;3.9
+maria;baseline;no intervention;4.5
+maria;baseline;no intervention;4.4
+maria;baseline;no intervention;2.8
+maria;baseline;no intervention;5.2
+maria;baseline;no intervention;5.2
+maria;baseline;no intervention;5.1
+maria;baseline;no intervention;1.7
+maria;baseline;no intervention;5.1
+maria;baseline;no intervention;2.4
+maria;baseline;no intervention;5.1
+maria;baseline;no intervention;3.5
+maria;baseline;no intervention;3.9
+kazumasa;baseline;no intervention;4.2
+kazumasa;baseline;no intervention;3.9
+kazumasa;baseline;no intervention;4.5
+kazumasa;baseline;no intervention;4.5
+kazumasa;baseline;no intervention;5.7
+kazumasa;baseline;no intervention;2.8
+kazumasa;baseline;no intervention;5.2
+kazumasa;baseline;no intervention;0.6
+kazumasa;baseline;no intervention;2.4
+kazumasa;baseline;no intervention;5.1
+kazumasa;baseline;no intervention;5.1
+kazumasa;baseline;no intervention;4.2
+kazumasa;baseline;no intervention;4.5
+kazumasa;baseline;no intervention;3.8
+kazumasa;baseline;no intervention;4.1
+vladnitu;baseline;no intervention;4.2
+vladnitu;baseline;allocate to self;3.9
+vladnitu;baseline;no intervention;4.5
+vladnitu;baseline;no intervention;4.5
+vladnitu;baseline;no intervention;5.7
+vladnitu;baseline;no intervention;5.2
+vladnitu;baseline;no intervention;2.8
+vladnitu;baseline;no intervention;5.1
+vladnitu;baseline;allocate to self;2.4
+vladnitu;baseline;no intervention;2.0
+vladnitu;baseline;no intervention;5.1
+vladnitu;baseline;no intervention;4.7
+vladnitu;baseline;no intervention;5.1
+vladnitu;baseline;allocate to self;3.6
+goose;baseline;no intervention;4.2
+goose;baseline;allocate to self;3.9
+goose;baseline;no intervention;4.4
+goose;baseline;no intervention;5.2
+goose;baseline;no intervention;2.8
+goose;baseline;no intervention;5.2
+goose;baseline;no intervention;2.8
+goose;baseline;no intervention;1.0
+goose;baseline;no intervention;5.1
+goose;baseline;no intervention;2.4
+goose;baseline;no intervention;5.1
+goose;baseline;no intervention;4.6
+goose;baseline;no intervention;4.9
+goose;baseline;no intervention;4.0
+goose;baseline;no intervention;4.3
+trial 1;global;no intervention;4.2
+trial 1;global;no intervention;3.9
+trial 1;global;no intervention;4.5
+trial 1;global;no intervention;4.5
+trial 1;global;no intervention;5.7
+trial 1;global;no intervention;2.8
+trial 1;global;no intervention;5.2
+trial 1;global;no intervention;0.8
+trial 1;global;no intervention;5.1
+trial 1;global;no intervention;2.4
+trial 1;global;no intervention;5.1
+trial 1;global;no intervention;4.3
+trial 1;global;no intervention;4.6
+trial 1;global;no intervention;3.8
+trial 1;global;no intervention;4.1
+trail 2;global;no intervention;4.2
+trail 2;global;no intervention;3.9
+trail 2;global;no intervention;4.5
+trail 2;global;no intervention;4.4
+trail 2;global;no intervention;5.2
+trail 2;global;no intervention;5.2
+trail 2;global;no intervention;2.8
+trail 2;global;no intervention;5.1
+trail 2;global;no intervention;1.2
+trail 2;global;no intervention;2.4
+trail 2;global;no intervention;5.1
+trail 2;global;no intervention;4.5
+trail 2;global;no intervention;4.8
+trail 2;global;no intervention;3.4
+trail 2;global;no intervention;3.8
+7;global;no intervention;4.2
+7;global;no intervention;3.9
+7;global;no intervention;4.5
+7;global;no intervention;5.7
+7;global;no intervention;2.8
+7;global;no intervention;5.2
+7;global;no intervention;0.4
+7;global;no intervention;0.8
+7;global;no intervention;5.1
+7;global;no intervention;2.4
+7;global;no intervention;5.1
+7;global;no intervention;4.5
+7;global;no intervention;3.7
+trial 1;global;no intervention;4.2
+trial 1;global;no intervention;3.9
+trial 1;global;no intervention;4.5
+trial 1;global;no intervention;4.4
+trial 1;global;no intervention;5.2
+trial 1;global;no intervention;2.8
+trial 1;global;no intervention;-0.1
+trial 1;global;no intervention;5.2
+trial 1;global;no intervention;2.4
+trial 1;global;no intervention;5.1
+trial 1;global;no intervention;1.7
+trial 1;global;no intervention;5.1
+trial 1;global;no intervention;5.0
+kosix;global;no intervention;4.2
+kosix;global;no intervention;3.9
+kosix;global;no intervention;4.5
+kosix;global;no intervention;4.4
+kosix;global;no intervention;5.2
+kosix;global;no intervention;5.2
+kosix;global;no intervention;2.8
+kosix;global;no intervention;5.1
+kosix;global;no intervention;1.3
+kosix;global;no intervention;2.4
+kosix;global;no intervention;5.1
+kosix;global;no intervention;4.6
+kosix;global;no intervention;4.9
+kosix;global;allocate to self;3.4
+kosix;global;allocate to self;3.7
+ivan;global;no intervention;4.2
+ivan;global;no intervention;3.9
+ivan;global;no intervention;4.5
+ivan;global;no intervention;5.7
+ivan;global;no intervention;2.8
+ivan;global;no intervention;5.2
+ivan;global;no intervention;0.2
+ivan;global;no intervention;0.6
+ivan;global;no intervention;5.1
+ivan;global;no intervention;2.4
+ivan;global;no intervention;5.1
+ivan;global;no intervention;4.3
+lubov;global;no intervention;4.2
+lubov;global;allocate to self;3.9
+lubov;global;no intervention;4.5
+lubov;global;no intervention;5.7
+lubov;global;no intervention;5.2
+lubov;global;no intervention;0.3
+lubov;global;no intervention;0.6
+lubov;global;no intervention;5.1
+lubov;global;no intervention;2.4
+lubov;global;no intervention;5.1
+lubov;global;no intervention;2.8
+lubov;global;no intervention;4.9
+lubov;global;no intervention;3.4
+maxdg;global;no intervention;4.2
+maxdg;global;no intervention;3.9
+maxdg;global;no intervention;4.5
+maxdg;global;no intervention;4.4
+maxdg;global;no intervention;5.2
+maxdg;global;no intervention;5.2
+maxdg;global;no intervention;5.1
+maxdg;global;no intervention;1.4
+maxdg;global;no intervention;2.4
+maxdg;global;no intervention;5.1
+maxdg;global;no intervention;4.7
+maxdg;global;no intervention;5.3
+maxdg;global;no intervention;2.8
+3734;global;no intervention;4.2
+3734;global;no intervention;3.9
+3734;global;no intervention;4.5
+3734;global;no intervention;4.4
+3734;global;no intervention;5.7
+3734;global;no intervention;2.8
+3734;global;no intervention;5.2
+3734;global;no intervention;0.3
+3734;global;no intervention;0.7
+3734;global;no intervention;5.1
+3734;global;no intervention;2.4
+3734;global;no intervention;5.1
+3734;global;allocate to robot;4.4
+3734;global;no intervention;3.4
+6;global;no intervention;4.2
+6;global;no intervention;3.9
+6;global;no intervention;4.5
+6;global;no intervention;4.4
+6;global;no intervention;5.2
+6;global;no intervention;2.8
+6;global;no intervention;5.2
+6;global;no intervention;0.3
+6;global;no intervention;2.4
+6;global;no intervention;5.1
+6;global;no intervention;1.8
+6;global;no intervention;5.1
+6;global;no intervention;4.2
+11;global;no intervention;4.2
+11;global;no intervention;3.9
+11;global;no intervention;4.5
+11;global;no intervention;5.7
+11;global;no intervention;2.8
+11;global;no intervention;5.2
+11;global;no intervention;0.3
+11;global;no intervention;0.7
+11;global;no intervention;5.1
+11;global;no intervention;2.4
+11;global;no intervention;5.1
+11;global;no intervention;4.7
+dodi;global;no intervention;4.2
+dodi;global;no intervention;3.9
+dodi;global;no intervention;4.5
+dodi;global;no intervention;5.7
+dodi;global;no intervention;2.8
+dodi;global;no intervention;5.2
+dodi;global;no intervention;0.9
+dodi;global;no intervention;5.1
+dodi;global;no intervention;1.5
+dodi;global;no intervention;2.4
+dodi;global;no intervention;5.1
+dodi;global;no intervention;5.0
+dodi;global;no intervention;3.4
+0000;global;no intervention;4.2
+0000;global;no intervention;3.9
+0000;global;no intervention;4.5
+0000;global;no intervention;5.7
+0000;global;no intervention;2.8
+0000;global;no intervention;5.2
+0000;global;no intervention;0.3
+0000;global;no intervention;0.7
+0000;global;no intervention;5.1
+0000;global;no intervention;2.4
+0000;global;no intervention;5.1
+0000;global;no intervention;4.4
+36;global;no intervention;4.2
+36;global;no intervention;3.9
+36;global;no intervention;4.5
+36;global;no intervention;4.5
+36;global;no intervention;5.7
+36;global;no intervention;5.2
+36;global;no intervention;2.8
+36;global;no intervention;5.1
+36;global;no intervention;1.3
+36;global;no intervention;2.4
+36;global;no intervention;5.1
+36;global;no intervention;4.6
+36;global;no intervention;5.0
+36;global;no intervention;5.3
+36;global;no intervention;4.3
+juls;global;no intervention;4.2
+juls;global;no intervention;3.9
+juls;global;no intervention;4.5
+juls;global;no intervention;5.7
+juls;global;no intervention;2.8
+juls;global;no intervention;5.2
+juls;global;no intervention;0.4
+juls;global;no intervention;0.8
+juls;global;no intervention;5.1
+juls;global;no intervention;2.4
+juls;global;no intervention;5.1
+juls;global;no intervention;4.6
+juls;global;no intervention;3.7
+42;global;no intervention;4.2
+42;global;no intervention;3.9
+42;global;no intervention;4.5
+42;global;no intervention;4.5
+42;global;no intervention;5.7
+42;global;no intervention;2.8
+42;global;no intervention;5.2
+42;global;no intervention;0.5
+42;global;no intervention;2.4
+42;global;no intervention;5.1
+42;global;no intervention;1.9
+42;global;no intervention;5.1
+42;global;no intervention;4.9
+42;global;no intervention;3.4
+42;global;no intervention;3.7
+nblagoev;global;no intervention;4.2
+nblagoev;global;no intervention;3.9
+nblagoev;global;no intervention;4.5
+nblagoev;global;no intervention;4.5
+nblagoev;global;no intervention;5.7
+nblagoev;global;allocate to self;2.8
+nblagoev;global;no intervention;5.2
+nblagoev;global;no intervention;5.1
+nblagoev;global;allocate to self;2.4
+nblagoev;global;no intervention;5.1
+nblagoev;global;no intervention;4.3
+nblagoev;global;no intervention;4.6
+nblagoev;global;no intervention;5.0
+nblagoev;global;allocate to self;3.7
+nblagoev;global;allocate to self;4.1
+smid;global;no intervention;4.2
+smid;global;no intervention;3.9
+smid;global;no intervention;4.5
+smid;global;no intervention;4.4
+smid;global;no intervention;5.7
+smid;global;no intervention;2.8
+smid;global;no intervention;5.2
+smid;global;no intervention;0.3
+smid;global;no intervention;0.6
+smid;global;no intervention;5.1
+smid;global;no intervention;5.1
+smid;global;no intervention;4.9
+smid;global;no intervention;2.4
+smid;global;no intervention;4.2
+dutchman;global;no intervention;4.2
+dutchman;global;no intervention;3.9
+dutchman;global;no intervention;4.4
+dutchman;global;no intervention;5.7
+dutchman;global;no intervention;2.8
+dutchman;global;no intervention;5.2
+dutchman;global;no intervention;2.8
+dutchman;global;no intervention;5.1
+dutchman;global;no intervention;5.1
+dutchman;global;no intervention;4.3
+dutchman;global;no intervention;2.4
+dutchman;global;no intervention;4.1
+dani;global;no intervention;4.2
+dani;global;no intervention;3.9
+dani;global;no intervention;4.5
+dani;global;no intervention;5.7
+dani;global;no intervention;2.8
+dani;global;no intervention;5.2
+dani;global;no intervention;0.3
+dani;global;no intervention;0.6
+dani;global;no intervention;5.1
+dani;global;no intervention;2.4
+dani;global;no intervention;5.1
+dani;global;no intervention;4.8
+dani;global;no intervention;3.7
+17j;global;no intervention;4.2
+17j;global;no intervention;3.9
+17j;global;no intervention;4.4
+17j;global;no intervention;5.2
+17j;global;no intervention;5.2
+17j;global;no intervention;2.8
+17j;global;no intervention;2.8
+17j;global;no intervention;5.1
+17j;global;no intervention;5.1
+17j;global;no intervention;4.1
+17j;global;no intervention;2.4
+17j;global;no intervention;3.4
+17j;global;no intervention;3.8
+17j;global;no intervention;4.2
+ii;global;no intervention;4.2
+ii;global;no intervention;3.9
+ii;global;no intervention;4.5
+ii;global;no intervention;5.7
+ii;global;no intervention;5.2
+ii;global;no intervention;2.8
+ii;global;no intervention;5.1
+ii;global;no intervention;1.2
+ii;global;no intervention;2.4
+ii;global;no intervention;5.1
+ii;global;no intervention;4.5
+ii;global;no intervention;4.8
+ii;global;no intervention;3.4
+laura;global;no intervention;4.2
+laura;global;no intervention;3.9
+laura;global;no intervention;4.5
+laura;global;no intervention;5.7
+laura;global;no intervention;5.2
+laura;global;allocate to self;2.8
+laura;global;no intervention;5.1
+laura;global;no intervention;1.2
+laura;global;no intervention;2.4
+laura;global;no intervention;5.1
+laura;global;no intervention;4.5
+laura;global;no intervention;4.9
+screesbht;baseline;no intervention;4.2

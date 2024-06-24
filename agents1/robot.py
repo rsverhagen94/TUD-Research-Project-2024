@@ -460,9 +460,57 @@ class robot(custom_agent_brain):
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
-                        
+                        #sensitivity4
+                        if self._condition == 'global':
+                            if self._total_victims_cat == 'multiple' and self._location_cat == 'known':
+                                self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When there are multiple people involved and the location is known, the sensitivity is above the allocation threshold in 100.00% of cases.' \
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'multiple' and self._location_cat == 'unknown':
+                                self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When there are multiple people involved and the location is unknown, the sensitivity is above the allocation threshold in 100.00% of cases.' \
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'one' and self._location_cat == 'known':
+                                self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When the number of people involved is one and the location is known, the sensitivity is above the allocation threshold in 100.00% of cases.'
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'one' and self._location_cat == 'unknown':
+                                self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When the number of people involved is one and the location is unknown, the sensitivity is above the allocation threshold in 100.00% of cases.'
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'unclear' and self._location_cat == 'known':
+                                self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When the number of people involved is unclear and the location is known, the sensitivity is above the allocation threshold in 92.31% of cases.'
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'unclear' and self._location_cat == 'unknown':
+                                self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When the number of people involved is unclear and the location is unknown, the sensitivity is above the allocation threshold in 100.00% of cases.'
+                                                   , self._name)  # CHECKED
+                            else:
+                                self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    ', self._name)
+
                     if self._tactic == 'defensive':
                         self._deploy_time = self._defensive_deployment_time
                         if self._condition == 'baseline':
@@ -473,8 +521,56 @@ class robot(custom_agent_brain):
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+                        #
+                        if self._condition == 'global':
+                            if self._total_victims_cat == 'multiple' and self._location_cat == 'known':
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When there are multiple people involved and the location is known, the sensitivity is above the allocation threshold in 100.00% of cases.'
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'multiple' and self._location_cat == 'unknown':
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When there are multiple people involved and the location is unknown, the sensitivity is above the allocation threshold in 100.00% of cases.'
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'one' and self._location_cat == 'known':
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When the number of people involved is one and the location is known, the sensitivity is above the allocation threshold in 100.00% of cases.'
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'one' and self._location_cat == 'unknown':
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When the number of people involved is one and the location is unknown, the sensitivity is above the allocation threshold in 100.00% of cases.'
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'unclear' and self._location_cat == 'known':
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When the number of people involved is unclear and the location is known, the sensitivity is above the allocation threshold in 92.31% of cases.'
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'unclear' and self._location_cat == 'unknown':
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                    When the number of people involved is unclear and the location is unknown, the sensitivity is above the allocation threshold in 100.00% of cases.'
+                                                   , self._name) #CHECKED
+                            else:
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str( self._sensitivity) + '</b>) \
+                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me.'
+                                                    , self._name)
 
                     # allocate decision making to human and keep track of time to ensure enough reading time of explanations    
                     self._decide = 'human'
@@ -501,9 +597,35 @@ class robot(custom_agent_brain):
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
 
+                        if self._condition == 'global':
+                            if self._total_victims_cat == 'none' and self._location_cat == 'known':
+                                self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                    When there are no people involved and the location is known, the sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                  , self._name) #CHECKED
+                            elif self._total_victims_cat == 'none' and self._location_cat == 'unknown':
+                                self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                    When there are no people involved and the location is unknown, the sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                  , self._name) #CHECKED
+                            elif self._total_victims_cat == 'unclear' and self._location_cat == 'known':
+                                self._send_message('Our offensive deployment has been going on for ' + str(self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                    When the number of people involved is unclear and the location is known, the sensitivity is below the allocation threshold in 7.69% of cases.'
+                                                  , self._name) #CHECKED
+                            else:
+                                self._send_message('Our offensive deployment has been going on for ' + str( self._offensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to a defensive deployment' + explanation + ' \
+                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                   ', self._name)
                     if self._tactic == 'defensive':
                         self._deploy_time = self._defensive_deployment_time
                         if self._condition == 'baseline':
@@ -514,8 +636,35 @@ class robot(custom_agent_brain):
                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                 + image_name, self._name)
                         # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+
+                        if self._condition == 'global':
+                            if self._total_victims_cat == 'unclear' and self._location_cat == 'known':
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                    When the number of people involved is unclear and the location is known, the sensitivity is below the allocation threshold in 7.69% of cases.'
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'none' and self._location_cat == 'known':
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                    When there are no people involved and the location is known, the sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                   , self._name) #CHECKED
+                            elif self._total_victims_cat == 'none' and self._location_cat == 'unknown':
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                    When there are no people involved and the location is unknown, the sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                   , self._name) #CHECKED
+                            else:
+                                self._send_message('Our defensive deployment has been going on for ' + str(self._defensive_deployment_time) + ' minutes now. \
+                                                    We should decide whether to continue with this deployment, or switch to an offensive deployment. \
+                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                   ', self._name)
 
                     # allocate decision making to robot and keep track of time to ensure enough reading time of explanations 
                     self._decide = self._name
@@ -525,11 +674,11 @@ class robot(custom_agent_brain):
                     self._phase = Phase.TACTIC
                     return Idle.__name__, {'action_duration': 0}
 
-            # decision making phase for the situation continue or switch deployment tactic
+            # decision-making phase for the situation continue or switch deployment tactic
             if Phase.TACTIC == self._phase:
                 if self._decide == 'human' and self._tactic == 'offensive':
                     self._waiting = True
-                    # reallocate decision making to the robot if the human decides so
+                    # reallocate decision-making to the robot if the human decides so
                     if self.received_messages_content and self.received_messages_content[-1] == 'Allocate to robot' and int(self._second) < self._time + 25 \
                         or self.received_messages_content and 'Allocating' in self.received_messages_content[-1] and 'to me' in self.received_messages_content[-1] \
                             and int(self._second) < self._time + 25:
@@ -717,8 +866,66 @@ class robot(custom_agent_brain):
                                             This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                             + image_name, self._name)
                     # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+
+                    if self._condition == 'global': #sensitivity2 function
+                        if self._total_victims_cat == 'multiple' and self._temperature_cat == 'close':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                When multiple people are involved and the temperature is close to the threshold, the moral sensitivity is above the allocation threshold in 100.00% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'multiple' and self._temperature_cat == 'higher':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                When multiple people are involved and the temperature is higher than the threshold, the moral sensitivity is above the allocation threshold in 76.92% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'multiple' and self._temperature_cat == 'lower':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                When multiple people are involved and the temperature is lower than the threshold, the moral sensitivity is above the allocation threshold in 46.15% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'one' and self._temperature_cat == 'close':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                When the number of people involved is one and the temperature is close to the threshold, the moral sensitivity is above the allocation threshold in 100.00% of cases'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'one' and self._temperature_cat == 'higher':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                When the number of people involved is one and the temperature is higher than the threshold, the moral sensitivity is above the allocation threshold in 92.31% of cases'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'one' and self._temperature_cat == 'lower':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                When the number of people involved is one and the temperature is lower than the threshold, the moral sensitivity is above the allocation threshold in 61.54% of cases'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'unclear' and self._temperature_cat == 'close':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                When the number of people involved is unclear and the temperature is close to the threshold, the moral sensitivity is above the allocation threshold in 61.54% of cases'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'unclear' and self._temperature_cat == 'higher':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                When the number of people involved is unclear and the temperature is higher than the threshold, the moral sensitivity is above the allocation threshold in 38.46% of cases'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'unclear' and self._temperature_cat == 'lower':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                When the number of people involved is unclear and the temperature is lower than the threshold, the moral sensitivity is above the allocation threshold in 7.69% of cases'
+                                               , self._name) #CHECKED
+                        else:
+                            self._send_message('The location of the fire source is still unknown. You have to decide whether to send in fire fighters to locate the fire source, \
+                                               or if this is too dangerous. <b>Please make this decision</b> as the predicted moral sensitivity \
+                                               (<b>' + str(self._sensitivity) + '</b>) exceeds my allocation threshold. ', self._name)
 
                     # allocate decision making to human and keep track of time to ensure enough reading time for the explanations
                     self._decide = 'human'
@@ -737,8 +944,73 @@ class robot(custom_agent_brain):
                                             This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                             + image_name, self._name)
                     # ADD YOUR EXPLANATIONS HERE
-                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                            print('To be implemented by students')
+
+                    if self._condition == 'global':
+                        if self._total_victims_cat == 'multiple' and self._temperature_cat == 'higher':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                When there are multiple people involved and the temperature is higher than the threshold, the moral sensitivity is below the allocation threshold in 23.08% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'multiple' and self._temperature_cat == 'lower':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                When there are multiple people involved and the temperature is lower than the threshold, the moral sensitivity is below the allocation threshold in 53.85% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'none' and self._temperature_cat == 'close':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                When there are no people involved and the temperature is close to the threshold, the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'none' and self._temperature_cat == 'higher':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                When there are no people involved and the temperature is higher than the threshold, the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'none' and self._temperature_cat == 'lower':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                When there are no people involved and the temperature is lower than the threshold, the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'one' and self._temperature_cat == 'higher':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                When the number of people involved is one and the temperature is higher than the threshold, the moral sensitivity is below the allocation threshold in 7.69% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'one' and self._temperature_cat == 'lower':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                When the number of people involved is one and the temperature is lower than the threshold, the moral sensitivity is below the allocation threshold in 38.46% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'unclear' and self._temperature_cat == 'close':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                When the number of people involved is unclear and the temperature is close to the threshold, the moral sensitivity is below the allocation threshold in 38.46% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'unclear' and self._temperature_cat == 'higher':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                When the number of people involved is unclear and the temperature is higher than the threshold, the moral sensitivity is below the allocation threshold in 61.54% of cases.'
+                                               , self._name) #CHECKED
+                        elif self._total_victims_cat == 'unclear' and self._temperature_cat == 'lower':
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                When the number of people involved is unclear and the temperature is lower than the threshold, the moral sensitivity is below the allocation threshold in 92.31% of cases.'
+                                               , self._name) #CHECKED
+                        else:
+                            self._send_message('The fire source still has not been located. We should decide whether to send in fire fighters to locate the fire source, \
+                                                                    or if this is too dangerous. <b>I will make this decision</b> as the predicted moral sensitivity \
+                                                                    (<b>' + str(self._sensitivity) + '</b>) is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                                    ', self._name)
 
                     # allocate decision making to robot and keep track of time to ensure enough reading time for visual explanations
                     self._decide = self._name
@@ -1040,8 +1312,29 @@ class robot(custom_agent_brain):
                                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                                 + image_name, self._name)
                                         # ADD YOUR EXPLANATIONS HERE
-                                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                                            print('To be implemented by students')
+                                        if self._condition == 'global':
+                                            if self._distance == 'large' and self._temperature_cat == 'higher':
+                                                self._send_message('I have found ' + vic + ' in office ' +
+                                                                   self._door['room_name'].split()[-1] + '. \
+                                                                                                                    We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(
+                                                    self._sensitivity) + '</b>) \
+                                                                                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                                                                                    When the distance is large and the temperature is higher than the threshold, the moral sensitivity is above the allocation threshold in 30.77% of cases.'
+                                                                   , self._name)  # CHECKED
+                                            elif self._distance == 'small' and self._temperature_cat == 'higher':
+                                                self._send_message('I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                    We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                    <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                                    When the distance is small and the temperature is higher than the threshold, the moral sensitivity is above the allocation threshold in 23.08% of cases.'
+                                                                  , self._name) #CHECKED
+                                            else:
+                                                self._send_message('I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                    We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                    <b>You have to decide</b> as the predicted moral sensitivity (<b>' + str( self._sensitivity) + '</b>) \
+                                                                    exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. '
+                                                                    , self._name)
 
                                         # allocate to human and keep track of time to ensure enough reading time of the explanation
                                         self._decide = 'human'
@@ -1059,8 +1352,42 @@ class robot(custom_agent_brain):
                                                                 This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                                 + image_name, self._name)
                                         # ADD YOUR EXPLANATIONS HERE
-                                        if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                                            print('To be implemented by students')
+                                        if self._condition == 'global':
+                                            if self._distance == 'large' and self._temperature_cat == 'higher':
+                                                self._send_message('I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                    We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str( self._sensitivity) + '</b>) \
+                                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                                    When the distance is large and the temperature is higher than the threshold, the moral sensitivity is below the allocation threshold in 69.23% of cases'
+                                                                   , self._name) #CHECKED
+                                            elif self._distance == 'small' and self._temperature_cat == 'higher':
+                                                self._send_message('I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                    We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str( self._sensitivity) + '</b>) \
+                                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                                    When the distance is small and the temperature is higher than the threshold, the moral sensitivity is below the allocation threshold in 76.92% of cases'
+                                                                   , self._name) #CHECKED
+                                            elif self._distance == 'large' and (self._temperature_cat == 'lower' or self._temperature_cat == 'close'):
+                                                self._send_message('I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                    We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str( self._sensitivity) + '</b>) \
+                                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                                    When the distance is large and the temperature is lower than the threshold, the moral sensitivity is below the allocation threshold in 100.00% of cases'
+                                                                   , self._name) #CHECKED
+                                            elif self._distance == 'small' and (self._temperature_cat == 'lower' or self._temperature_cat == 'close'):
+                                                self._send_message('I have found ' + vic + ' in office ' + self._door['room_name'].split()[-1] + '. \
+                                                                    We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str( self._sensitivity) + '</b>) \
+                                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                                    When the distance is small and the temperature is lower than the threshold, the moral sensitivity is below the allocation threshold in 100.00% of cases'
+                                                                   , self._name) #CHECKED
+                                            else:
+                                                self._send_message('I have found ' + vic + ' in office ' +
+                                                                   self._door['room_name'].split()[-1] + '. \
+                                                                    We should decide whether to send in a fire fighter to rescue the victim, or if this is too dangerous. \
+                                                                    <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                                    is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                                   ', self._name)
 
                                         # allocate to robot and keep track of time to ensure enough reading time for the visual explanations
                                         self._decide = self._name
@@ -1100,8 +1427,48 @@ class robot(custom_agent_brain):
                                                         This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                         + image_name, self._name)
                                 # ADD YOUR EXPLANATIONS HERE
-                                if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                                    print('To be implemented by students')
+                                if self._condition == 'global':
+                                    if len(self._room_victims) == 1 and self._smoke == 'fast' and self._location_cat == 'unknown':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                            When the number of victims is 1 and the smoke spreads fast and the location is unknown,'
+                                                            ' the moral sensitivity is above the allocation threshold in 100.00% of cases'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 2 and self._smoke == 'fast' and self._location_cat == 'unknown':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                            When the number of victims is 2 and the smoke spreads fast and the location is unknown,'
+                                                            ' the moral sensitivity is above the allocation threshold in 100.00% of cases'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 3 and self._smoke == 'fast' and self._location_cat == 'unknown':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                            When the number of victims is 3 and the smoke spreads fast and the location is unknown,'
+                                                            ' the moral sensitivity is above the allocation threshold in 100.00% of cases'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 3 and self._smoke == 'normal' and self._location_cat == 'unknown':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                                            When the number of victims is 3 and the smoke spreads normally and the location is unknown,'
+                                                            ' the moral sensitivity is above the allocation threshold in 100.00% of cases'
+                                                            , self._name) #CHECKED
+                                    else:
+                                        self._send_message(
+                                            'I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                            <b>Please make this decision</b> as the predicted moral sensitivity (<b>' + str( self._sensitivity) + '</b>) \
+                                            exceeds my allocation threshold. Take as much time as you need. However, you can also reallocate the decision to me. \
+                                            ', self._name)
+
+
 
                                 # allocate to human and keep track of time to ensure enough reading time for the visual explanations
                                 self._decide = 'human'
@@ -1118,8 +1485,125 @@ class robot(custom_agent_brain):
                                                         This is how much each feature contributed to the predicted sensitivity: \n \n ' \
                                                         + image_name, self._name)
                                 # ADD YOUR EXPLANATIONS HERE
-                                if self._condition == 'adaptive' or self._condition == 'contrastive' or self._condition == 'global' or self._condition == 'on-demand' or self._condition == 'textual':
-                                    print('To be implemented by students')
+                                if self._condition == 'global':
+                                    if len(self._room_victims) == 1 and self._smoke == 'fast' and self._location_cat == 'known':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 1 and the smoke spreads fast and the location is known,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 1 and self._smoke == 'normal' and self._location_cat == 'known':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 1 and the smoke spreads normally and the location is known,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 1 and self._smoke == 'normal' and self._location_cat == 'unknown':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 1 and the smoke spreads normally and the location is unknown,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 1 and self._smoke == 'slow' and self._location_cat == 'known':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 1 and the smoke spreads slowly and the location is known,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 1 and self._smoke == 'slow' and self._location_cat == 'unknown':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 1 and the smoke spreads slowly and the location is unknown,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 2 and self._smoke == 'fast' and self._location_cat == 'known':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 2 and the smoke spreads fast and the location is known,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 2 and self._smoke == 'normal' and self._location_cat == 'known':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 2 and the smoke spreads normally and the location is known,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 2 and self._smoke == 'normal' and self._location_cat == 'unknown':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 2 and the smoke spreads normally and the location is unknown,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 2 and self._smoke == 'slow' and self._location_cat == 'known':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 2 and the smoke spreads slowly and the location is known,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 2 and self._smoke == 'slow' and self._location_cat == 'unknown':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 2 and the smoke spreads slowly and the location is unknown,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 3 and self._smoke == 'fast' and self._location_cat == 'known':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 3 and the smoke spreads fast and the location is known,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 3 and self._smoke == 'normal' and self._location_cat == 'known':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 3 and the smoke spreads normally and the location is known,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 3 and self._smoke == 'slow' and self._location_cat == 'known':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 3 and the smoke spreads slowly and the location is known,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name) #CHECKED
+                                    elif len(self._room_victims) == 3 and self._smoke == 'slow' and self._location_cat == 'unknown':
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            When the number of victims is 3 and the smoke spreads slowly and the location is unknown,'
+                                                            ' the moral sensitivity is below the allocation threshold in 100.00% of cases.'
+                                                            , self._name)  #CHECKED
+                                    else:
+                                        self._send_message('I have found ' + str(self._room_victims) + ' in the burning office ' + self._door['room_name'].split()[-1] + '. \
+                                                            We should decide whether to first extinguish the fire, or evacuate the ' + self._vic_string + '. \
+                                                            <b>I will make this decision</b> as the predicted moral sensitivity (<b>' + str(self._sensitivity) + '</b>) \
+                                                            is below my allocation threshold. However, you can also reallocate the decision to yourself. \
+                                                            ', self._name)
 
                                 # allocate to robot and keep track of time to ensure enough reading time for the visual explanation
                                 self._decide = self._name
