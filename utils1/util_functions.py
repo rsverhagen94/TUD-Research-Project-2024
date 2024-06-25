@@ -278,8 +278,8 @@ def R_to_Py_plot_locate(people, resistance, temperature, image_name):
         with contextlib.redirect_stdout(nullfile), contextlib.redirect_stderr(nullfile):
             robjects.r(r_script)
     sensitivity = robjects.r['new_pred'][0]
-    baseline = robjects.r['data_plot'][robjects.r('data_plot$variable == "none"'), 'phi'][0]
-    temperature_sensitivity = robjects.r['data_plot'][robjects.r('data_plot$variable == "people"'), 'phi'][0]
+    baseline = robjects.r('data_plot[data_plot$variable == "none", "phi"]')[0]
+    temperature_sensitivity = robjects.r('data_plot[data_plot$variable == "temperature", "phi"]')[0]
     resistance_sensitivity = robjects.r('data_plot[data_plot$variable == "resistance", "phi"]')[0]
     people_sensitivity = robjects.r('data_plot[data_plot$variable == "people", "phi"]')[0]
 
@@ -379,7 +379,7 @@ def R_to_Py_plot_rescue(resistance, temperature, distance, image_name):
     baseline = robjects.r('data_plot[data_plot$variable == "none", "phi"]')[0]
     temperature_sensitivity = robjects.r('data_plot[data_plot$variable == "temperature", "phi"]')[0]
     resistance_sensitivity = robjects.r('data_plot[data_plot$variable == "resistance", "phi"]')[0]
-    distance_sensitivity = robjects.r['data_plot'][robjects.r('data_plot$variable == "distance"'), 'phi'][0]
+    distance_sensitivity = robjects.r('data_plot[data_plot$variable == "distance", "phi"]')[0]
 
     return sensitivity, baseline, temperature_sensitivity, resistance_sensitivity, distance_sensitivity
     

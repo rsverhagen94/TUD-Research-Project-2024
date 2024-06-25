@@ -689,7 +689,9 @@ class tutorial_robot(custom_agent_brain):
                 # determine the correct image name to show in the visual explanation
                 image_name = "custom_gui/static/images/sensitivity_plots/plot_at_time_" + str(self._resistance) + ".svg"
                 # calculate the predicted moral sensitivity for this situation
-                self._sensitivity = R_to_Py_plot_locate(self._total_victims_cat, self._resistance, self._temperature_cat, image_name)
+                sensitivity, baseline, temperature_sensitivity, resistance_sensitivity, people_sensitivity = R_to_Py_plot_locate(
+                    self._total_victims_cat, self._resistance, self._temperature_cat, image_name)
+                self._sensitivity = sensitivity
                 self._plot_generated = True
                 # allocate decision making to human if predicted sensivitiy is higher than the allocation threshold
                 if self._sensitivity > 4.1:
