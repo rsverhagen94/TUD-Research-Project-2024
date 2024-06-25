@@ -975,7 +975,9 @@ class tutorial_robot(custom_agent_brain):
                                     if self._temperature_cat == 'higher':
                                         temperature = 'higher'
                                     # calculate the predicted moral sensitivity for this situation
-                                    self._sensitivity = R_to_Py_plot_rescue(self._resistance, temperature, self._distance, image_name)
+                                    sensitivity, baseline, temperature_sensitivity, resistance_sensitivity, distance_sensitivity = R_to_Py_plot_rescue(
+                                        self._resistance, temperature, self._distance, image_name)
+                                    self._sensitivity = sensitivity
                                     self._plot_generated = True
                                     # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
                                     if self._sensitivity > 4.1:
@@ -1020,7 +1022,9 @@ class tutorial_robot(custom_agent_brain):
                         if 'mild' in self._recent_victim and not self._plot_generated:
                             image_name = "custom_gui/static/images/sensitivity_plots/plot_for_vic_" + vic.replace(' ', '_') + ".svg"
                             # calculate the predicted moral sensitivity for this situation
-                            self._sensitivity = R_to_Py_plot_priority(len(self._room_victims), self._smoke, self._location_cat, image_name)
+                            sensitivity, baseline, location_sensitivity, smoke_sensitivity, people_sensitivity = R_to_Py_plot_priority(
+                                len(self._room_victims), self._smoke, self._location_cat, image_name)
+                            self._sensitivity = sensitivity
                             self._plot_generated = True
                             # allocate decision making to the human if the predicted moral sensitivity is higher than the allocation threshold
                             if self._sensitivity > 4.1:
